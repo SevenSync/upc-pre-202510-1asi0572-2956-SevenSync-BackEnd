@@ -1,8 +1,10 @@
 using System.Reflection;
 using System.Text;
+using Application.GeminiTest;
 using Application.IAM.CommandServices;
 using Application.IAM.Others;
 using Application.IAM.QueryServices;
+using Domain.GeminiTest;
 using Domain.IAM.Repositories;
 using Domain.IAM.Services.Interfaces;
 using Domain.IAM.Services.Others;
@@ -76,6 +78,7 @@ builder.Services.AddScoped<IUserCommandService, UserCommandService>();
 builder.Services.AddScoped<IUserQueryService, UserQueryService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IEncryptService, EncryptService>();
+builder.Services.AddHttpClient<IGenerativeAiService, GenerativeAiService>();
 
 var key = builder.Configuration.GetValue<string>("JwtSettings:key");
 var keyBytes = Encoding.ASCII.GetBytes(key!);

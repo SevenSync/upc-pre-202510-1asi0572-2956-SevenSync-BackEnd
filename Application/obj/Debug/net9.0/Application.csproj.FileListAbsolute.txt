@@ -17,3 +17,4 @@ C:\Users\USUARIO\Desktop\iot\backend\MaceTech\Application\obj\Debug\net9.0\Appli
 C:\Users\USUARIO\Desktop\iot\backend\MaceTech\Application\obj\Debug\net9.0\refint\Application.dll
 C:\Users\USUARIO\Desktop\iot\backend\MaceTech\Application\obj\Debug\net9.0\Application.pdb
 C:\Users\USUARIO\Desktop\iot\backend\MaceTech\Application\obj\Debug\net9.0\ref\Application.dll
+C:\Users\USUARIO\Desktop\iot\backend\MaceTech\Application\obj\Debug\net9.0\Application.sourcelink.json

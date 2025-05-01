@@ -63,3 +63,4 @@ C:\Users\USUARIO\Desktop\iot\backend\MaceTech\Presentation\obj\Debug\net9.0\Pres
 C:\Users\USUARIO\Desktop\iot\backend\MaceTech\Presentation\obj\Debug\net9.0\ref\Presentation.dll
 C:\Users\USUARIO\Desktop\iot\backend\MaceTech\Presentation\bin\Debug\net9.0\Presentation.xml
 C:\Users\USUARIO\Desktop\iot\backend\MaceTech\Presentation\obj\Debug\net9.0\Presentation.xml
+C:\Users\USUARIO\Desktop\iot\backend\MaceTech\Presentation\obj\Debug\net9.0\Presentation.sourcelink.json
