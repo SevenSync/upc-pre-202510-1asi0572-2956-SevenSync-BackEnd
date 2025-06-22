@@ -1,10 +1,13 @@
+using MaceTech.API.Analytics.Interfaces.ACL.DTOs;
+
 namespace MaceTech.API.Analytics.Interfaces.ACL.Services;
 
-public class WateringContextFacade(IWateringLogQueryService wateringLogQueryService) : IWateringContextFacade
+public class WateringLogContextFacade(IWateringContextFacade wateringContextFacade) : IWateringLogContextFacade
 {
-    public async Task<IEnumerable<WateringLog>> FetchWateringLogsByDeviceIdAndDateRange(string deviceId, DateTime fromDate, DateTime toDate)
+    public async Task<IEnumerable<WateringLogDataDto>> GetWateringHistoryForDevice(string deviceId, DateTime fromDate, DateTime toDate)
     {
-        var query = new GetWateringHistoryByDeviceIdQuery(deviceId, fromDate, toDate);
-        return await wateringLogQueryService.Handle(query);
+        // La lógica de la llamada se delega completamente a la fachada del otro contexto.
+        // Este servicio actúa como un simple "pasamanos", pero aísla la dependencia.
+        return await wateringContextFacade.FetchWateringLogsByDeviceIdAndDateRange(deviceId, fromDate, toDate);
     }
 }

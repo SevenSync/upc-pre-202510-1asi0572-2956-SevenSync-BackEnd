@@ -1,6 +1,9 @@
+
+
 using MaceTech.API.Analytics.Domain.Model.Queries;
 using MaceTech.API.Analytics.Domain.Model.ValueObjects;
 using MaceTech.API.Analytics.Domain.Repositories;
+using MaceTech.API.Analytics.Domain.Services;
 using MaceTech.API.Analytics.Domain.Services.QueriesServices;
 using MaceTech.API.Analytics.Interfaces.ACL;
 
@@ -8,8 +11,9 @@ namespace MaceTech.API.Analytics.Application.Internal.QueryServices;
 
 public class AnalyticsQueryService(
     IPotRecordRepository potRecordRepository,
-    IAlertsContextFacade alertsContextFacade,
-    IWateringContextFacade wateringContextFacade) : IAnalyticsQueryService
+    IAlertsContextFacade alertsContextFacade, // Inyectamos el nuevo cliente
+    IWateringLogContextFacade wateringLogContextFacade, // Inyectamos el nuevo cliente
+    IAnalyticsDomainService analyticsDomainService) : IAnalyticsQueryService
 {
     public async Task<IEnumerable<PotComparisonData>> Handle(GetPotComparisonQuery query)
     {
@@ -19,35 +23,24 @@ public class AnalyticsQueryService(
 
         foreach (var deviceId in query.DeviceIds)
         {
+            // La lógica de orquestación ahora es mucho más legible.
             var recordsTask = potRecordRepository.GetRecordsByDeviceIdAndDateRangeAsync(deviceId, fromDate, toDate);
             var alertsTask = alertsContextFacade.FetchAlertsByDeviceIdAndDateRange(deviceId, fromDate, toDate);
-            var wateringTask = wateringContextFacade.FetchWateringLogsByDeviceIdAndDateRange(deviceId, fromDate, toDate);
+            var wateringTask = wateringLogContextFacade.GetWateringLogHistoryForDevice(deviceId, fromDate, toDate);
 
             await Task.WhenAll(recordsTask, alertsTask, wateringTask);
             
-            // Materializamos los resultados en listas para trabajar con ellas en memoria.
-            var weeklyRecords = (await recordsTask).ToList();
-            var weeklyAlerts = (await alertsTask).ToList();
-            var weeklyWatering = (await wateringTask).ToList();
-
-            // Ahora la comprobación .Any() y las operaciones .Average()/.Sum()
-            // se ejecutan sobre la lista en memoria, de forma segura.
-            if (weeklyRecords.Count == 0) continue;
-            if (weeklyAlerts.Count == 0 && weeklyWatering.Count == 0)
-            {
-                // Si no hay alertas ni riego, no hay datos que comparar.
-                continue;
-            }
-            var result = new PotComparisonData(
-                DeviceId: deviceId,
-                WeeklyAvgTemperature: weeklyRecords.Average(r => r.Temperature),
-                WeeklyAvgHumidity: weeklyRecords.Average(r => r.Humidity),
-                WeeklyAvgPh: weeklyRecords.Average(r => r.Ph),
-                
-                TotalWaterVolumeMl: weeklyWatering.Sum(w => (float)w.WaterVolumeMl),
-                
-                CriticalAlertsCount: weeklyAlerts.Count(a => a.GeneratedRecommendation.Urgency == "Crítica")
+            var weeklyRecords = await recordsTask;
+            var weeklyAlerts = await alertsTask;
+            var weeklyWatering = await wateringTask;
+            
+            var result = analyticsDomainService.CalculateComparisonForDevice(
+                deviceId,
+                weeklyRecords,
+                weeklyAlerts,
+                weeklyWatering
             );
+            
             comparisonResults.Add(result);
         }
         return comparisonResults;
