@@ -7,7 +7,9 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Folder Include="analytics\" />
       <Folder Include="Shared\Infrastructure\Interfaces\ASP\Configuration\Extensions\" />
+      <Folder Include="watering\" />
     </ItemGroup>
 
     <ItemGroup>

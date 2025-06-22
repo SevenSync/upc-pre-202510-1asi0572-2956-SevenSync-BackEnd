@@ -1,3 +1,11 @@
+using MaceTech.API.Analytics.Application.Internal.CommandServices;
+using MaceTech.API.Analytics.Application.Internal.QueryServices;
+using MaceTech.API.Analytics.Domain.Repositories;
+using MaceTech.API.Analytics.Domain.Services.CommandServices;
+using MaceTech.API.Analytics.Domain.Services.QueriesServices;
+using MaceTech.API.Analytics.Infrastructure.Persistence.EFC.Repositories;
+using MaceTech.API.Analytics.Interfaces.ACL;
+using MaceTech.API.Analytics.Interfaces.ACL.Services;
 using MaceTech.API.IAM.Application.Internal.CommandServices;
 using MaceTech.API.IAM.Application.Internal.OutboundServices;
 using MaceTech.API.IAM.Application.Internal.QueryServices;
@@ -124,6 +132,23 @@ builder.Services.AddScoped<IProfileCommandService, ProfileCommandService>();
 builder.Services.AddScoped<IProfileQueryService, ProfileQueryService>();
 builder.Services.AddScoped<IProfilesContextFacade, ProfilesContextFacade>();
 
+//      |: Analytics Bounded Context Injection Configuration
+builder.Services.AddScoped<IPotRecordRepository, PotRecordRepository>();
+builder.Services.AddScoped<IPotRecordCommandService, PotRecordCommandService>();
+builder.Services.AddScoped<IPotRecordQueryService, IPotRecordQueryService>();
+
+builder.Services.AddScoped<IAlertRepository, AlertRepository>();
+builder.Services.AddScoped<IAlertCommandService, AlertCommandService>();
+builder.Services.AddScoped<IAlertCommandService, AlertCommandService>();
+
+
+builder.Services.AddScoped<IAnalyticsQueryService, AnalyticsQueryService>();
+
+builder.Services.AddScoped<IAlertQueryService, AlertQueryService>(); 
+
+
+builder.Services.AddScoped<IAlertsContextFacade, AlertsContextFacade>();
+builder.Services.AddScoped<IWateringContextFacade, WateringContextFacade>();
 
 
 var app = builder.Build();
