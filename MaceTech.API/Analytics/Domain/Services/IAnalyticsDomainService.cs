@@ -1,0 +1,16 @@
+using MaceTech.API.Analytics.Domain.Model.Aggregates;
+using MaceTech.API.Analytics.Domain.Model.ValueObjects;
+using MaceTech.API.Analytics.Interfaces.ACL.DTOs;
+
+namespace MaceTech.API.Analytics.Domain.Services;
+
+public interface IAnalyticsDomainService
+{
+    // La firma ahora espera los DTOs, no las entidades de otros contextos.
+    PotComparisonData CalculateComparisonForDevice(
+        string deviceId, 
+        IEnumerable<PotRecord> records, 
+        IEnumerable<AlertDataDto> alerts, 
+        IEnumerable<WateringLogDataDto> wateringLogs
+    );
+}
