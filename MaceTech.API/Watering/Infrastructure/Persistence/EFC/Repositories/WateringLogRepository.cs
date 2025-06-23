@@ -1,6 +1,6 @@
 using MaceTech.API.Shared.Infrastructure.Persistence.EFC.Configuration;
 using MaceTech.API.Shared.Infrastructure.Persistence.EFC.Repositories;
-using MaceTech.API.Watering.Domain.Model.Aggregates.MaceTech.API.Watering.Domain.Model.Aggregates;
+using MaceTech.API.Watering.Domain.Model.Aggregates;
 using MaceTech.API.Watering.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 

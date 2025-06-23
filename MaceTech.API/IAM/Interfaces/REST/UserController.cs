@@ -22,13 +22,4 @@ public class UserController(IUserQueryService userQueryService) : ControllerBase
         var userResource = UserResourceFromEntityAssembler.ToResourceFromEntity(user);
         return Ok(userResource);
     }
-    
-    [HttpGet]
-    public async Task<IActionResult> GetAllUsers()
-    {
-        var getAllUsersQuery = new GetAllUsersQuery();
-        var users = await userQueryService.Handle(getAllUsersQuery);
-        var userResources = users.Select(UserResourceFromEntityAssembler.ToResourceFromEntity);
-        return Ok(userResources);
-    }
 }

@@ -1,4 +1,4 @@
-using MaceTech.API.Watering.Domain.Model.Aggregates.MaceTech.API.Watering.Domain.Model.Aggregates;
+using MaceTech.API.Watering.Domain.Model.Aggregates;
 using MaceTech.API.Watering.Interfaces.REST.Resources;
 
 namespace MaceTech.API.Watering.Interfaces.REST.Transform;

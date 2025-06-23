@@ -1,4 +1,4 @@
-using MaceTech.API.Watering.Domain.Model.Aggregates.MaceTech.API.Watering.Domain.Model.Aggregates;
+using MaceTech.API.Watering.Domain.Model.Aggregates;
 using MaceTech.API.Watering.Domain.Model.Queries;
 using MaceTech.API.Watering.Domain.Repositories;
 using MaceTech.API.Watering.Domain.Services.QueryServices;
