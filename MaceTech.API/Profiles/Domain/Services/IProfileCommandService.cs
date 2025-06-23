@@ -6,4 +6,5 @@ namespace MaceTech.API.Profiles.Domain.Services;
 public interface IProfileCommandService
 {
     public Task<Profile?> Handle(CreateProfileCommand command);
+    public Task Handle(UpdateProfileCommand command);
 }

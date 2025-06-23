@@ -6,11 +6,18 @@ using MaceTech.API.Analytics.Domain.Services.QueriesServices;
 using MaceTech.API.Analytics.Infrastructure.Persistence.EFC.Repositories;
 using MaceTech.API.Analytics.Interfaces.ACL;
 using MaceTech.API.Analytics.Interfaces.ACL.Services;
+using MaceTech.API.AssetAndResourceManagement.Application.Internal.CommandServices;
+using MaceTech.API.AssetAndResourceManagement.Application.Internal.QueryServices;
+using MaceTech.API.AssetAndResourceManagement.Domain.Repositories;
+using MaceTech.API.AssetAndResourceManagement.Domain.Services;
+using MaceTech.API.AssetAndResourceManagement.Infrastructure.Persistence.EFC.Repositories;
+using MaceTech.API.IAM.Application.External.Email.Services;
 using MaceTech.API.IAM.Application.Internal.CommandServices;
 using MaceTech.API.IAM.Application.Internal.OutboundServices;
 using MaceTech.API.IAM.Application.Internal.QueryServices;
 using MaceTech.API.IAM.Domain.Repositories;
 using MaceTech.API.IAM.Domain.Services;
+using MaceTech.API.IAM.Infrastructure.Email.SendGrid.Services;
 using MaceTech.API.IAM.Infrastructure.Hashing.BCrypt.Services;
 using MaceTech.API.IAM.Infrastructure.Persistence.EFC.Repositories;
 using MaceTech.API.IAM.Infrastructure.Pipeline.Middleware.Extensions;
@@ -28,12 +35,22 @@ using MaceTech.API.Profiles.Interfaces.ACL.Services;
 using MaceTech.API.Shared.Domain.Repositories;
 using MaceTech.API.Shared.Infrastructure.Persistence.EFC.Configuration;
 using MaceTech.API.Shared.Infrastructure.Persistence.EFC.Repositories;
+using MaceTech.API.SubscriptionsAndPayments.Application.External.Sku.Services;
+using MaceTech.API.SubscriptionsAndPayments.Application.Internal.CommandServices;
+using MaceTech.API.SubscriptionsAndPayments.Application.Internal.QueryServices;
+using MaceTech.API.SubscriptionsAndPayments.Domain.Repositories;
+using MaceTech.API.SubscriptionsAndPayments.Domain.Services;
+using MaceTech.API.SubscriptionsAndPayments.Infrastructure.Persistence.EFC.Repositories;
+using MaceTech.API.SubscriptionsAndPayments.Infrastructure.Plans.Repository;
+using MaceTech.API.SubscriptionsAndPayments.Infrastructure.Sku;
 using MaceTech.API.Watering.Application.Internal.CommandServices;
 using MaceTech.API.Watering.Application.Internal.QueryServices;
 using MaceTech.API.Watering.Domain.Repositories;
 using MaceTech.API.Watering.Domain.Services.CommandServices;
 using MaceTech.API.Watering.Domain.Services.QueryServices;
 using MaceTech.API.Watering.Infrastructure.Persistence.EFC.Repositories;
+using MaceTech.API.Watering.Interfaces.ACL;
+using MaceTech.API.Watering.Interfaces.ACL.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -131,6 +148,7 @@ builder.Services.AddScoped<IUserQueryService, UserQueryService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IHashingService, HashingService>();
 builder.Services.AddScoped<IIamContextFacade, IamContextFacade>();
+builder.Services.AddScoped<IEmailComposer, EmailComposer>();
 
 //      |: Profiles Bounded Context Injection Configuration
 builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
@@ -138,21 +156,28 @@ builder.Services.AddScoped<IProfileCommandService, ProfileCommandService>();
 builder.Services.AddScoped<IProfileQueryService, ProfileQueryService>();
 builder.Services.AddScoped<IProfilesContextFacade, ProfilesContextFacade>();
 
+//      |: Asset and Resource Management Bounded Context Injection Configuration
+builder.Services.AddScoped<IPotRepository, PotRepository>();
+builder.Services.AddScoped<IPotCommandService, PotCommandService>();
+builder.Services.AddScoped<IPotQueryService, PotQueryService>();
+
+//      |: Subscriptions and Payments Bounded Context Injection Configuration
+builder.Services.AddScoped<ISubscriptionPlansQueryService, SubscriptionsPlansQueryService>();
+builder.Services.AddScoped<ISubscriptionPlansRepository, JsonSubscriptionPlansRepository>();
+builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
+builder.Services.AddScoped<ISubscriptionCommandService, SubscriptionCommandService>();
+builder.Services.AddScoped<ISubscriptionQueryService, SubscriptionQueryService>();
+builder.Services.AddScoped<ISkuAndPriceIdConverter, SkuAndStipePriceConverter>();
+
 //      |: Analytics Bounded Context Injection Configuration
 builder.Services.AddScoped<IPotRecordRepository, PotRecordRepository>();
 builder.Services.AddScoped<IPotRecordCommandService, PotRecordCommandService>();
 builder.Services.AddScoped<IPotRecordQueryService, IPotRecordQueryService>();
-
 builder.Services.AddScoped<IAlertRepository, AlertRepository>();
 builder.Services.AddScoped<IAlertCommandService, AlertCommandService>();
 builder.Services.AddScoped<IAlertCommandService, AlertCommandService>();
-
-
 builder.Services.AddScoped<IAnalyticsQueryService, AnalyticsQueryService>();
-
 builder.Services.AddScoped<IAlertQueryService, AlertQueryService>(); 
-
-
 builder.Services.AddScoped<IAlertsContextFacade, AlertsContextFacade>();
 builder.Services.AddScoped<IWateringContextFacade, WateringContextFacade>();
 
@@ -160,7 +185,6 @@ builder.Services.AddScoped<IWateringContextFacade, WateringContextFacade>();
 builder.Services.AddScoped<IWateringLogRepository, WateringLogRepository>();
 builder.Services.AddScoped<IWateringLogCommandService, WateringLogCommandService>();
 builder.Services.AddScoped<IWateringLogQueryService, WateringLogQueryService>();
-
 
 var app = builder.Build();
 

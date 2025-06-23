@@ -1,7 +1,5 @@
 namespace MaceTech.API.Watering.Domain.Model.Aggregates;
 
-namespace MaceTech.API.Watering.Domain.Model.Aggregates;
-
 public class WateringLog
 {
     public int Id { get; private set; }

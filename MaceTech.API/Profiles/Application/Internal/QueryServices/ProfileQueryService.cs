@@ -12,13 +12,15 @@ public class ProfileQueryService(IProfileRepository profileRepository) : IProfil
         return await profileRepository.ListAsync();
     }
     
-    public async Task<Profile?> Handle(GetProfileByEmailQuery query)
+    public async Task<Profile?> Handle(GetProfileByUidQuery query)
     {
-        return await profileRepository.FindProfileByEmailAsync(query.Email);
+        return await profileRepository.FindProfileByUidAsync(query.Uid);
     }
     
-    public async Task<Profile?> Handle(GetProfileByIdQuery query)
+    public async Task<bool> Handle(HasProfileQuery query)
     {
-        return await profileRepository.FindByIdAsync(query.ProfileId);
+        var result = await profileRepository.FindProfileByUidAsync(query.Uid); 
+        if (result is null) return false;
+        return true;
     }
 }

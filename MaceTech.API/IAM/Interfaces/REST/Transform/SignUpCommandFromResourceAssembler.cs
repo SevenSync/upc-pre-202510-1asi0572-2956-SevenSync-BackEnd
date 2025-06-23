@@ -5,8 +5,8 @@ namespace MaceTech.API.IAM.Interfaces.REST.Transform;
 
 public static class SignUpCommandFromResourceAssembler
 {
-    public static SignUpCommand ToCommandFromResource(SignUpResource resource)
+    public static SignUpCommand ToCommandFromResource(string userId, SignUpResource resource)
     {
-        return new SignUpCommand(resource.Email, resource.Password);
+        return new SignUpCommand(userId, resource.Email, resource.Password);
     }
 }

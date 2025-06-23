@@ -5,6 +5,7 @@ namespace MaceTech.API.IAM.Domain.Repositories;
 
 public interface IUserRepository : IBaseRepository<User>
 {
-    Task<User?> FindByEmailAsync(string username);
-    bool ExistsByEmail(string username);
+    Task<User?> FindByActiveEmailAsync(string token);
+    bool ExistsByEmail(string email);
+    Task<User?> FindByUidAsync(string uid);
 }

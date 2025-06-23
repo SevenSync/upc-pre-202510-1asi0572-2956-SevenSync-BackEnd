@@ -1,3 +1,3 @@
 namespace MaceTech.API.IAM.Interfaces.REST.Resources;
 
-public record AuthenticatedUserResource(long Id, string Email, string Token);
+public record AuthenticatedUserResource(string Uid, string Email, string Token);

@@ -7,10 +7,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MaceTech.API.Profiles.Infrastructure.Persistence.EFC.Repositories;
 
-public class ProfileRepository(AppDbContext context) : BaseRepository<Profile>(context), IProfileRepository
+public class ProfileRepository(
+    AppDbContext context
+    ) : BaseRepository<Profile>(context), IProfileRepository
 {
-    public Task<Profile?> FindProfileByEmailAsync(EmailAddress email)
+    public Task<Profile?> FindProfileByIdAsync(long id)
     {
-        return Context.Set<Profile>().Where(p => p.Email == email).FirstOrDefaultAsync();
+        return Context.Set<Profile>().Where(p => p.Id == id).FirstOrDefaultAsync();
+    }
+
+    public Task<Profile?> FindProfileByUidAsync(string uid)
+    {
+        return Context.Set<Profile>().Where(p => p.Uid == uid).FirstOrDefaultAsync();
     }
 }

@@ -7,13 +7,13 @@ namespace MaceTech.API.IAM.Application.Internal.QueryServices;
 
 public class UserQueryService(IUserRepository userRepository) : IUserQueryService
 {
-    public async Task<User?> Handle(GetUserByIdQuery query)
+    public async Task<User?> Handle(GetUserByUidQuery query)
     {
-        return await userRepository.FindByIdAsync(query.UserId);
+        return await userRepository.FindByUidAsync(query.UserUid);
     }
-    public async Task<User?> Handle(GetUserByEmailQuery query)
+    public async Task<User?> Handle(GetActiveUserByEmailQuery query)
     {
-        return await userRepository.FindByEmailAsync(query.Email);
+        return await userRepository.FindByActiveEmailAsync(query.Email);
     } 
     public async Task<IEnumerable<User>> Handle(GetAllUsersQuery query)
     {

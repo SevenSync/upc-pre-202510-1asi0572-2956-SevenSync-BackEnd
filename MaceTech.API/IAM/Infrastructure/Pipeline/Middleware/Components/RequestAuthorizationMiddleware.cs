@@ -1,4 +1,5 @@
 using MaceTech.API.IAM.Application.Internal.OutboundServices;
+using MaceTech.API.IAM.Domain.Exceptions;
 using MaceTech.API.IAM.Domain.Model.Queries;
 using MaceTech.API.IAM.Domain.Services;
 using MaceTech.API.IAM.Infrastructure.Pipeline.Middleware.Attributes;
@@ -22,10 +23,12 @@ public class RequestAuthorizationMiddleware(RequestDelegate next)
         }
 
         var token = context.Request.Headers.Authorization.FirstOrDefault()?.Split(" ").Last();
-        if (token == null) throw new Exception("Null or invalid token");
+        if (token == null) throw new InvalidTokenException();
+        
         var userId = await tokenService.ValidateToken(token);
-        if (userId == null) throw new Exception("Invalid token");
-        var getUserByIdQuery = new GetUserByIdQuery(userId.Value);
+        if (userId == null) throw new InvalidTokenException();
+        
+        var getUserByIdQuery = new GetUserByUidQuery(userId);
         var result = await userQueryService.Handle(getUserByIdQuery);
         if (result == null) throw new Exception("User not found");
         

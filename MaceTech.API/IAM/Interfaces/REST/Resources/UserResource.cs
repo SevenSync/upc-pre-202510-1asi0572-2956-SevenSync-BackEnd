@@ -1,3 +1,3 @@
 namespace MaceTech.API.IAM.Interfaces.REST.Resources;
 
-public record UserResource(long Id, string Email);
+public record UserResource(string Uid, string Email);

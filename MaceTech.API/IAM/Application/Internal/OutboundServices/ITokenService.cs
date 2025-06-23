@@ -5,5 +5,5 @@ namespace MaceTech.API.IAM.Application.Internal.OutboundServices;
 public interface ITokenService
 {
     public string GenerateToken(User user);
-    public Task<long?> ValidateToken(string token);
+    public Task<string?> ValidateToken(string token);
 }

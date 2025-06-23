@@ -5,6 +5,6 @@ namespace MaceTech.API.Profiles.Domain.Services;
 public interface IProfileQueryService
 {
     public Task<IEnumerable<Profile>> Handle(GetAllProfilesQuery query);
-    public Task<Profile?> Handle(GetProfileByEmailQuery query);
-    public Task<Profile?> Handle(GetProfileByIdQuery query);
+    public Task<Profile?> Handle(GetProfileByUidQuery query);
+    public Task<bool> Handle(HasProfileQuery query);
 }

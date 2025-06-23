@@ -5,10 +5,10 @@ namespace MaceTech.API.Profiles.Interfaces.REST.Transform;
 
 public static class CreateProfileCommandFromResourceAssembler
 {
-    public static CreateProfileCommand ToCommandFromResource(CreateProfileResource resource)
+    public static CreateProfileCommand ToCommandFromResource(string uid, CreateProfileResource resource)
     {
         return new CreateProfileCommand(
-            resource.FirstName, resource.LastName, resource.Email, 
+            uid, resource.FirstName, resource.LastName,
             resource.Street, resource.Number, resource.City, resource.PostalCode, resource.Country,
             resource.CountryCode, resource.PhoneNumber
             );

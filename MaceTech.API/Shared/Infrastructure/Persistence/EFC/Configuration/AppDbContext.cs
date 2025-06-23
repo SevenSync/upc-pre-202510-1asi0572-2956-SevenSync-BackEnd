@@ -1,8 +1,10 @@
 using EntityFrameworkCore.CreatedUpdatedDate.Extensions;
 using MaceTech.API.Analytics.Domain.Model.Aggregates;
+using MaceTech.API.AssetAndResourceManagement.Domain.Model.Aggregates;
 using MaceTech.API.IAM.Domain.Model.Aggregates;
 using MaceTech.API.Profiles.Domain.Model.Aggregates;
 using MaceTech.API.Shared.Infrastructure.Persistence.EFC.Configuration.Extensions;
+using MaceTech.API.SubscriptionsAndPayments.Domain.Model.Aggregates;
 using Microsoft.EntityFrameworkCore;
 
 namespace MaceTech.API.Shared.Infrastructure.Persistence.EFC.Configuration;
@@ -27,27 +29,22 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         base.OnModelCreating(builder);
         
         //  |: IAM Context
-        builder.Entity<User>().HasKey(u => u.Id);
-        builder.Entity<User>().Property(u => u.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<User>().HasKey(u => u.Uid);
+        builder.Entity<User>().Property(u => u.Uid).IsRequired();
         builder.Entity<User>().Property(u => u.Email).IsRequired();
-        builder.Entity<User>().Property(u => u.PasswordHash).IsRequired();
+        builder.Entity<User>().Property(u => u.TokenVersion).IsRequired();
+        builder.Entity<User>().Property(u => u.Status).IsRequired();
         
         //  |: Profiles Context
         builder.Entity<Profile>().HasKey(p => p.Id);
         builder.Entity<Profile>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
-        // ... (resto de la configuración de Profile que ya tenías)
+        builder.Entity<Profile>().Property(p => p.Uid).IsRequired();
         builder.Entity<Profile>().OwnsOne(p => p.Name, n =>
         {
             n.WithOwner().HasForeignKey("Id");
             n.Property(p => p.FirstName).HasColumnName("FirstName");
             n.Property(p => p.LastName).HasColumnName("LastName");
         });
-        builder.Entity<Profile>().OwnsOne(p => p.Email,
-            e =>
-            {
-                e.WithOwner().HasForeignKey("Id");
-                e.Property(a => a.Address).HasColumnName("EmailAddress");
-            });
         builder.Entity<Profile>().OwnsOne(p => p.Address,
             a =>
             {
@@ -65,6 +62,35 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
                 a.Property(s => s.CountryCode).HasColumnName("PhoneNumberCountryCode");
                 a.Property(s => s.Number).HasColumnName("PhoneNumber");
             });
+
+        builder.UseSnakeCaseWithPluralizedTableNamingConvention();
+        
+        //  |: SubscriptionAndPayments Context
+        builder.Entity<Subscription>().HasKey(s => s.Id);
+        builder.Entity<Subscription>().Property(s => s.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<Subscription>().Property(s => s.Uid).IsRequired();
+        builder.Entity<Subscription>().Property(s => s.CreatedAt).IsRequired();
+        builder.Entity<Subscription>().Property(s => s.Plan).IsRequired();
+        
+        //  |: Pot Context
+        builder.Entity<Pot>().HasKey(s => s.Id);
+        builder.Entity<Pot>().Property(s => s.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<Pot>().Property(s => s.Uid).IsRequired();
+        builder.Entity<Pot>().Property(s => s.IsUserAssigned).IsRequired();
+        builder.Entity<Pot>().Property(s => s.PlantId).IsRequired();
+        builder.Entity<Pot>().Property(s => s.IsPlantLinked).IsRequired();
+        builder.Entity<Pot>().Property(s => s.Name).IsRequired();
+        builder.Entity<Pot>().Property(s => s.Location).IsRequired();
+        builder.Entity<Pot>().Property(s => s.BatteryLevel).IsRequired();
+        builder.Entity<Pot>().Property(s => s.WaterLevel).IsRequired();
+        builder.Entity<Pot>().Property(s => s.Humidity).IsRequired();
+        builder.Entity<Pot>().Property(s => s.Luminance).IsRequired();
+        builder.Entity<Pot>().Property(s => s.Temperature).IsRequired();
+        builder.Entity<Pot>().Property(s => s.Ph).IsRequired();
+        builder.Entity<Pot>().Property(s => s.Salinity).IsRequired();
+        builder.Entity<Pot>().Property(s => s.Status).IsRequired();
+        builder.Entity<Pot>().Property(s => s.AssignedAt).IsRequired();
+        builder.Entity<Pot>().Property(s => s.CreatedAt).IsRequired();
 
         
         // --- Configuración de Analytics: PotRecord (Limpiada) ---

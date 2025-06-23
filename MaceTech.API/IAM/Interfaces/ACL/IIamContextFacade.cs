@@ -2,7 +2,8 @@ namespace MaceTech.API.IAM.Interfaces.ACL;
 
 public interface IIamContextFacade
 {
-    public Task<long> CreateUser(string email, string password);
-    public Task<long> FetchUserIdByEmail(string email);
-    public Task<string> FetchEmailByUserId(long userId);
+    public Task<string> CreateUser(string uid, string email, string password);
+    public Task<string> FetchUserUidByEmail(string email);
+    public Task<string> FetchEmailByUserUid(string userUid);
+    public string GetUserUidFromContext(HttpContext httpContext);
 }
