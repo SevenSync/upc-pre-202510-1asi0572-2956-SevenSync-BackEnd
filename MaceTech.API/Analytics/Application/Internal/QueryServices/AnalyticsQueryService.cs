@@ -11,8 +11,8 @@ namespace MaceTech.API.Analytics.Application.Internal.QueryServices;
 
 public class AnalyticsQueryService(
     IPotRecordRepository potRecordRepository,
-    IAlertsContextFacade alertsContextFacade, // Inyectamos el nuevo cliente
-    IWateringLogContextFacade wateringLogContextFacade, // Inyectamos el nuevo cliente
+    IAlertsContextFacade alertsContextFacade,
+    IWateringLogContextFacade wateringLogContextFacade,
     IAnalyticsDomainService analyticsDomainService) : IAnalyticsQueryService
 {
     public async Task<IEnumerable<PotComparisonData>> Handle(GetPotComparisonQuery query)

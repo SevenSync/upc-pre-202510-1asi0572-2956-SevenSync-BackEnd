@@ -11,9 +11,4 @@ public class AlertQueryService(IAlertRepository alertRepository) : IAlertQuerySe
     {
         return await alertRepository.FindByDeviceIdAndDateRangeAsync(query.DeviceId, query.From, query.To);
     }
-    
-    public async Task<IEnumerable<Alert>> Handle(GetAlertsByDeviceIdQuery query)
-    {
-        return await alertRepository.FindByDeviceIdWithFiltersAsync(query.DeviceId, query.FromDate, query.ToDate, query.AlertType);
-    }
 }

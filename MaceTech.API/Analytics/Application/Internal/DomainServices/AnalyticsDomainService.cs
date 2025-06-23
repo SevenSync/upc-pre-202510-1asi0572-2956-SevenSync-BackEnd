@@ -10,7 +10,7 @@ public class AnalyticsDomainService : IAnalyticsDomainService
     public PotComparisonData CalculateComparisonForDevice(string deviceId, IEnumerable<PotRecord> records, IEnumerable<AlertDataDto> alerts, IEnumerable<WateringLogDataDto> wateringLogs)
     {
         var potRecords = records.ToList();
-        if (!potRecords.Any())
+        if (potRecords.Count == 0)
         {
             return new PotComparisonData(deviceId, 0, 0, 0, 0, 0);
         }
