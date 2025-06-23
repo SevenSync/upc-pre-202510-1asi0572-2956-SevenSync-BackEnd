@@ -28,6 +28,12 @@ using MaceTech.API.Profiles.Interfaces.ACL.Services;
 using MaceTech.API.Shared.Domain.Repositories;
 using MaceTech.API.Shared.Infrastructure.Persistence.EFC.Configuration;
 using MaceTech.API.Shared.Infrastructure.Persistence.EFC.Repositories;
+using MaceTech.API.Watering.Application.Internal.CommandServices;
+using MaceTech.API.Watering.Application.Internal.QueryServices;
+using MaceTech.API.Watering.Domain.Repositories;
+using MaceTech.API.Watering.Domain.Services.CommandServices;
+using MaceTech.API.Watering.Domain.Services.QueryServices;
+using MaceTech.API.Watering.Infrastructure.Persistence.EFC.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -149,6 +155,11 @@ builder.Services.AddScoped<IAlertQueryService, AlertQueryService>();
 
 builder.Services.AddScoped<IAlertsContextFacade, AlertsContextFacade>();
 builder.Services.AddScoped<IWateringContextFacade, WateringContextFacade>();
+
+//      |: Watering Bounded Context Injection Configuration
+builder.Services.AddScoped<IWateringLogRepository, WateringLogRepository>();
+builder.Services.AddScoped<IWateringLogCommandService, WateringLogCommandService>();
+builder.Services.AddScoped<IWateringLogQueryService, WateringLogQueryService>();
 
 
 var app = builder.Build();
