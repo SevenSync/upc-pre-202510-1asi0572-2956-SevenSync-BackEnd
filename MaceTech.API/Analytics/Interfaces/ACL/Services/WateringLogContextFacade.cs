@@ -1,4 +1,5 @@
 using MaceTech.API.Analytics.Interfaces.ACL.DTOs;
+using MaceTech.API.Watering.Interfaces.ACL;
 
 namespace MaceTech.API.Analytics.Interfaces.ACL.Services;
 

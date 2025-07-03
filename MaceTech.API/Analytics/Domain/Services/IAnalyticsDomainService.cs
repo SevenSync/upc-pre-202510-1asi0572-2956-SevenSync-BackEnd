@@ -13,4 +13,10 @@ public interface IAnalyticsDomainService
         IEnumerable<AlertDataDto> alerts, 
         IEnumerable<WateringLogDataDto> wateringLogs
     );
+    
+    WaterSavedKpi CalculateWaterSavedKpi(
+        string deviceId,
+        DateTime date,
+        IEnumerable<WateringLogDataDto> dailyWateringLogs
+    );
 }

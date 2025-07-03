@@ -148,8 +148,8 @@ builder.Services.AddScoped<IAlertQueryService, AlertQueryService>();
 
 
 builder.Services.AddScoped<IAlertsContextFacade, AlertsContextFacade>();
-builder.Services.AddScoped<IWateringContextFacade, WateringContextFacade>();
 
+builder.Services.AddScoped<IKpiQueryService, KpiQueryService>();
 
 var app = builder.Build();
 
