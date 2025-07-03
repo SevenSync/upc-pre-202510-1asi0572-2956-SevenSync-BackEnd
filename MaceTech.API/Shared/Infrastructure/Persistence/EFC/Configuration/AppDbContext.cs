@@ -2,6 +2,7 @@ using EntityFrameworkCore.CreatedUpdatedDate.Extensions;
 using MaceTech.API.Analytics.Domain.Model.Aggregates;
 using MaceTech.API.AssetAndResourceManagement.Domain.Model.Aggregates;
 using MaceTech.API.IAM.Domain.Model.Aggregates;
+using MaceTech.API.Planning.Domain.Model.Aggregates;
 using MaceTech.API.Profiles.Domain.Model.Aggregates;
 using MaceTech.API.Shared.Infrastructure.Persistence.EFC.Configuration.Extensions;
 using MaceTech.API.SubscriptionsAndPayments.Domain.Model.Aggregates;
@@ -16,7 +17,8 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
     public DbSet<Profile> Profiles { get; set; }
     public DbSet<PotRecord> PotRecords { get; set; }
     public DbSet<Alert> Alerts { get; set; }
-
+    public DbSet<Plant> Plants { get; set; }
+    public DbSet<DevicePlant> DevicePlants { get; set; }
     protected override void OnConfiguring(DbContextOptionsBuilder builder)
     {
         base.OnConfiguring(builder);
@@ -123,6 +125,75 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
             r.Property(p => p.Urgency).HasColumnName("Urgency");
             r.Property(p => p.GuideUrl).HasColumnName("GuideUrl");
         });
+        
+        //  |: Planning Context: Plant (El catálogo general)
+        builder.Entity<Plant>().ToTable("Plants");
+        builder.Entity<Plant>().HasKey(p => p.Id);
+        builder.Entity<Plant>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<Plant>().Property(p => p.CommonName).IsRequired().HasMaxLength(100);
+        builder.Entity<Plant>().Property(p => p.ScientificName).HasMaxLength(150);
+        builder.Entity<Plant>().Property(p => p.ImageUrl).HasMaxLength(255);
+        builder.Entity<Plant>().Property(p => p.Description).HasMaxLength(1000);
+        
+        // Configuración para el Value Object 'OptimalParameters' anidado en Plant
+        builder.Entity<Plant>().OwnsOne(p => p.OptimalParameters, parameters =>
+        {
+            parameters.OwnsOne(po => po.TemperaturaAmbiente, temp =>
+            {
+                temp.Property(t => t.Min).HasColumnName("OptimalTempMin");
+                temp.Property(t => t.Max).HasColumnName("OptimalTempMax");
+            });
+            parameters.OwnsOne(po => po.Humedad, hum =>
+            {
+                hum.Property(h => h.Min).HasColumnName("OptimalHumidityMin");
+                hum.Property(h => h.Max).HasColumnName("OptimalHumidityMax");
+            });
+            parameters.OwnsOne(po => po.Luminosidad, lum =>
+            {
+                lum.Property(l => l.Min).HasColumnName("OptimalLuminosityMin");
+                lum.Property(l => l.Max).HasColumnName("OptimalLuminosityMax");
+            });
+            parameters.OwnsOne(po => po.SalinidadSuelo, sal =>
+            {
+                sal.Property(s => s.Min).HasColumnName("OptimalSalinityMin");
+                sal.Property(s => s.Max).HasColumnName("OptimalSalinityMax");
+            });
+            parameters.OwnsOne(po => po.PhSuelo, ph =>
+            {
+                ph.Property(p => p.Min).HasColumnName("OptimalPhMin");
+                ph.Property(p => p.Max).HasColumnName("OptimalPhMax");
+            });
+        });
+        
+        //  |: Planning Context: DevicePlant (La planta específica del usuario/maceta)
+        builder.Entity<DevicePlant>().ToTable("DevicePlants");
+        builder.Entity<DevicePlant>().HasKey(dp => dp.Id);
+        builder.Entity<DevicePlant>().Property(dp => dp.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<DevicePlant>().Property(dp => dp.DeviceId).IsRequired().HasMaxLength(50);
+        
+        // Relación: Un DevicePlant tiene una Plant del catálogo.
+        builder.Entity<DevicePlant>()
+            .HasOne(dp => dp.Plant)
+            .WithMany() // Una planta del catálogo puede ser elegida por muchos DevicePlants
+            .HasForeignKey(dp => dp.PlantId)
+            .IsRequired();
+            
+        // Configuración para el Value Object 'CustomThresholds' anidado en DevicePlant
+        builder.Entity<DevicePlant>().OwnsOne(dp => dp.CustomThresholds, thresholds =>
+        {
+            thresholds.OwnsOne(t => t.TemperaturaAmbiente, temp =>
+            {
+                temp.Property(p => p.Min).HasColumnName("CustomTempMin");
+                temp.Property(p => p.Max).HasColumnName("CustomTempMax");
+            });
+             thresholds.OwnsOne(t => t.Humedad, hum =>
+            {
+                hum.Property(p => p.Min).HasColumnName("CustomHumidityMin");
+                hum.Property(p => p.Max).HasColumnName("CustomHumidityMax");
+            });
+            // ... (y así para los otros umbrales personalizados)
+        });
+
         
         // Aplica la convención de nombres al final de todo
         builder.UseSnakeCaseWithPluralizedTableNamingConvention();

@@ -31,6 +31,12 @@ using MaceTech.API.IAM.Infrastructure.Pipeline.Middleware.Extensions;
 using MaceTech.API.IAM.Infrastructure.Tokens.JWT.Configuration;
 using MaceTech.API.IAM.Interfaces.ACL;
 using MaceTech.API.IAM.Interfaces.ACL.Services;
+using MaceTech.API.Planning.Application.Internal.CommandServices;
+using MaceTech.API.Planning.Application.Internal.QueryServices;
+using MaceTech.API.Planning.Domain.Repositories;
+using MaceTech.API.Planning.Domain.Services.CommandServices;
+using MaceTech.API.Planning.Domain.Services.QueryServices;
+using MaceTech.API.Planning.Infrastructure.Persistence.EFC.Repositories;
 using MaceTech.API.Profiles.Application.Internal.CommandServices;
 using MaceTech.API.Profiles.Application.Internal.QueryServices;
 using MaceTech.API.Profiles.Domain.Repositories;
@@ -169,7 +175,6 @@ builder.Services.AddCors(options =>
         .AllowAnyHeader());
 });
 
-//  Configura l'iniezione delle dipendenze.
 //      |: Shared Bounded Context Injection Configuration
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
@@ -223,6 +228,13 @@ builder.Services.AddScoped<IWateringLogCommandService, WateringLogCommandService
 builder.Services.AddScoped<IWateringContextFacade, WateringContextFacade>();
 builder.Services.AddScoped<IWateringLogContextFacade, WateringLogContextFacade>();
 builder.Services.AddScoped<IWateringLogQueryService, WateringLogQueryService>();
+
+//      |: Planning Bounded Context
+builder.Services.AddScoped<IPlantRepository, PlantRepository>();
+builder.Services.AddScoped<IPlantQueryService, PlantQueryService>();
+builder.Services.AddScoped<IDevicePlantRepository, DevicePlantRepository>();
+builder.Services.AddScoped<IDevicePlantCommandService, DevicePlantCommandService>();
+builder.Services.AddScoped<IDevicePlantQueryService, DevicePlantQueryService>();
 
 var app = builder.Build();
 
