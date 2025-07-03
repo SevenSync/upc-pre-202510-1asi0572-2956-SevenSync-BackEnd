@@ -7,3 +7,7 @@
 MaceTech.API/macetech-101-firebase-adminsdk-fbsvc-33a4c94a5a.json
 MaceTech.API/appsettings.json
 MaceTech.API/bin/Debug/net9.0/macetech-101-firebase-adminsdk-fbsvc-33a4c94a5a.json
+MaceTech.API/appsettings.json
+/.idea
+/MaceTech.API/bin
+/MaceTech.API/obj
