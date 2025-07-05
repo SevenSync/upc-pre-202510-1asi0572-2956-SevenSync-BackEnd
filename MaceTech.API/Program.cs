@@ -218,23 +218,8 @@ builder.Services.AddScoped<IAlertCommandService, AlertCommandService>();
 builder.Services.AddScoped<IAnalyticsQueryService, AnalyticsQueryService>();
 builder.Services.AddScoped<IAlertQueryService, AlertQueryService>(); 
 builder.Services.AddScoped<IAlertsContextFacade, AlertsContextFacade>();
-builder.Services.AddScoped<IAnalyticsDomainService, AnalyticsDomainService>();
-builder.Services.AddScoped<IRecommendationGenerationService, RecommendationGenerationService>();
-//  builder.Services.AddScoped<, WateringContextFacade>();
 
-//      |: Watering Bounded Context Injection Configuration
-builder.Services.AddScoped<IWateringLogRepository, WateringLogRepository>();
-builder.Services.AddScoped<IWateringLogCommandService, WateringLogCommandService>();
-builder.Services.AddScoped<IWateringContextFacade, WateringContextFacade>();
-builder.Services.AddScoped<IWateringLogContextFacade, WateringLogContextFacade>();
-builder.Services.AddScoped<IWateringLogQueryService, WateringLogQueryService>();
-
-//      |: Planning Bounded Context
-builder.Services.AddScoped<IPlantRepository, PlantRepository>();
-builder.Services.AddScoped<IPlantQueryService, PlantQueryService>();
-builder.Services.AddScoped<IDevicePlantRepository, DevicePlantRepository>();
-builder.Services.AddScoped<IDevicePlantCommandService, DevicePlantCommandService>();
-builder.Services.AddScoped<IDevicePlantQueryService, DevicePlantQueryService>();
+builder.Services.AddScoped<IKpiQueryService, KpiQueryService>();
 
 var app = builder.Build();
 

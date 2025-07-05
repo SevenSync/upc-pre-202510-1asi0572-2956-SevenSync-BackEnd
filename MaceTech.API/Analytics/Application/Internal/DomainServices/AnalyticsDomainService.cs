@@ -7,6 +7,9 @@ namespace MaceTech.API.Analytics.Application.Internal.DomainServices;
 
 public class AnalyticsDomainService : IAnalyticsDomainService
 {
+    
+    private const double StandardDailyWateringMl = 500.0;
+
     public PotComparisonData CalculateComparisonForDevice(string deviceId, IEnumerable<PotRecord> records, IEnumerable<AlertDataDto> alerts, IEnumerable<WateringLogDataDto> wateringLogs)
     {
         var potRecords = records.ToList();
@@ -26,6 +29,23 @@ public class AnalyticsDomainService : IAnalyticsDomainService
             // Ahora trabajamos con las propiedades del DTO
             TotalWaterVolumeMl: wateringLogsList.Select(w => w.WaterVolumeMl).Sum(),
             CriticalAlertsCount: alertsList.Count(a => a.Urgency == "Crítica")
+        );
+    }
+    
+    public WaterSavedKpi CalculateWaterSavedKpi(string deviceId, DateTime date, IEnumerable<WateringLogDataDto> dailyWateringLogs)
+    {
+        // Calculamos el total de agua usada realmente por MaceTech en el día.
+        var actualWateringMl = dailyWateringLogs.Select(log => log.WaterVolumeMl).Sum();
+
+        // Calculamos el ahorro.
+        var waterSavedMl = StandardDailyWateringMl - actualWateringMl;
+
+        return new WaterSavedKpi(
+            deviceId,
+            date,
+            StandardDailyWateringMl,
+            actualWateringMl,
+            waterSavedMl > 0 ? waterSavedMl : 0 // El ahorro no puede ser negativo
         );
     }
 }
