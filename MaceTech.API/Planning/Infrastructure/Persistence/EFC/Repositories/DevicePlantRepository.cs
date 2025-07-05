@@ -10,8 +10,6 @@ public class DevicePlantRepository(AppDbContext context) : BaseRepository<Device
 {
     public async Task<DevicePlant?> FindByDeviceIdAsync(string deviceId)
     {
-        // Usamos Include para cargar la entidad 'Plant' relacionada.
-        // Esto es crucial para que el objeto devuelto tenga toda la información.
         return await Context.Set<DevicePlant>()
             .Include(dp => dp.Plant)
             .FirstOrDefaultAsync(dp => dp.DeviceId == deviceId);

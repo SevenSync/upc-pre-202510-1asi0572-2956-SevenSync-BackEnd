@@ -42,14 +42,12 @@ public class DevicePlantsController(
     [HttpPut("thresholds")]
     public async Task<IActionResult> UpdateDevicePlantThresholds(string deviceId, [FromBody] UpdateDevicePlantThresholdsResource resource)
     {
-        // Primero, obtenemos la configuración actual para poder fusionar los datos
         var existingSettings = await devicePlantQueryService.Handle(new GetPlantSettingsByDeviceIdQuery(deviceId));
         if (existingSettings == null)
         {
             return NotFound(new { message = "No plant settings found for this device to update." });
         }
         
-        // Creamos el comando a partir del recurso y la entidad existente
         var command = UpdateDevicePlantThresholdsCommandFromResourceAssembler.ToCommandFromResource(resource, existingSettings);
         
         try
@@ -60,7 +58,6 @@ public class DevicePlantsController(
         }
         catch (ArgumentException ex)
         {
-            // Capturamos la excepción de validación del dominio y devolvemos un Bad Request
             return BadRequest(new { message = ex.Message });
         }
     }

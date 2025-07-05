@@ -1,6 +1,7 @@
 using MaceTech.API.Analytics.Domain.Model.Aggregates;
 using MaceTech.API.Analytics.Domain.Model.Queries;
 using MaceTech.API.Analytics.Domain.Repositories;
+using MaceTech.API.Analytics.Domain.Services.QueriesServices;
 
 namespace MaceTech.API.Analytics.Application.Internal.QueryServices;
 

@@ -5,11 +5,9 @@ using MaceTech.API.SubscriptionsAndPayments.Application.External.Sku.Requests;
 using MaceTech.API.SubscriptionsAndPayments.Application.External.Sku.Services;
 using MaceTech.API.SubscriptionsAndPayments.Domain.Model.Commands;
 using MaceTech.API.SubscriptionsAndPayments.Domain.Model.Queries;
-using MaceTech.API.SubscriptionsAndPayments.Domain.Model.ValueObjects;
 using MaceTech.API.SubscriptionsAndPayments.Domain.Services;
 using MaceTech.API.SubscriptionsAndPayments.Interfaces.REST.Subscription.Resources;
 using MaceTech.API.SubscriptionsAndPayments.Interfaces.REST.Subscription.Responses;
-using MaceTech.API.SubscriptionsAndPayments.Interfaces.REST.Subscription.Transform;
 using Microsoft.AspNetCore.Mvc;
 using Stripe;
 using Stripe.Checkout;
@@ -17,7 +15,7 @@ using Stripe.Checkout;
 namespace MaceTech.API.SubscriptionsAndPayments.Interfaces.REST.Subscription;
 
 [ApiController]
-[Route("api/subscriptions/")]
+[Route("api/v1/subscriptions/")]
 [Produces(MediaTypeNames.Application.Json)]
 public class SubscriptionsController(
     ISubscriptionPlansQueryService plansQueryService,

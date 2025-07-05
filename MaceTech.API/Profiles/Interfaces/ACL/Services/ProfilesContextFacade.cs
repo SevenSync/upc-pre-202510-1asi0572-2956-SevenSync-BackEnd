@@ -1,6 +1,4 @@
 using MaceTech.API.Profiles.Domain.Model.Commands;
-using MaceTech.API.Profiles.Domain.Model.Queries;
-using MaceTech.API.Profiles.Domain.Model.ValueObjects;
 using MaceTech.API.Profiles.Domain.Services;
 
 namespace MaceTech.API.Profiles.Interfaces.ACL.Services;

@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace MaceTech.API.Profiles.Interfaces.REST;
 
 [ApiController]
-[Route("api/profiles/")]
+[Route("api/v1/profiles/")]
 [Produces(MediaTypeNames.Application.Json)]
 public class ProfilesController(
     IProfileCommandService profileCommandService, 

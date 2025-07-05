@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Net.Mime;
 using MaceTech.API.Analytics.Domain.Model.Queries;
 using MaceTech.API.Analytics.Domain.Services.QueriesServices;
@@ -9,12 +10,12 @@ namespace MaceTech.API.Analytics.Interfaces.REST;
 
 [Authorize]
 [ApiController]
-[Route("api/analytics")]
+[Route("api/v1/analytics")]
 [Produces(MediaTypeNames.Application.Json)]
 public class AnalyticsController(IAnalyticsQueryService analyticsQueryService) : ControllerBase
 {
     [HttpGet("comparison")]
-    public async Task<IActionResult> GetPotComparison([FromQuery] List<string> deviceIds)
+    public async Task<IActionResult> GetPotComparison([Required][FromQuery] List<string> deviceIds)
     {
         if (deviceIds is null || deviceIds.Count == 0)
         {

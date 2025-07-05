@@ -1,5 +1,4 @@
 using MaceTech.API.IAM.Domain.Exceptions;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MaceTech.API.Shared.Infrastructure.Pipeline.Middleware.Components;

@@ -14,16 +14,12 @@ public class AlertCommandService(
 {
     public async Task<Alert> Handle(CreateAlertCommand command)
     {
-        // 1. Usar el servicio de dominio para aplicar las reglas de negocio
         var recommendation = recommendationService.GenerateFromAlert(command.AlertType, command.Value);
         
-        // 2. Crear el nuevo agregado 'Alert'
         var alert = new Alert(command.DeviceId, command.AlertType, command.Value, recommendation);
 
-        // 3. Persistir el agregado usando el repositorio
         await alertRepository.AddAsync(alert);
         
-        // 4. Confirmar la transacción
         await unitOfWork.CompleteAsync();
         
         return alert;

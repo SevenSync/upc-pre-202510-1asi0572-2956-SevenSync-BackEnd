@@ -1,7 +1,6 @@
 using MaceTech.API.Analytics.Domain.Model.Aggregates;
 using MaceTech.API.Analytics.Domain.Repositories;
 using MaceTech.API.Shared.Infrastructure.Persistence.EFC.Configuration;
-using MaceTech.API.Shared.Infrastructure.Persistence.EFC.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace MaceTech.API.Analytics.Infrastructure.Persistence.EFC.Repositories;

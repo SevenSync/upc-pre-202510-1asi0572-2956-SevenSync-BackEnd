@@ -10,7 +10,7 @@ namespace MaceTech.API.Watering.Interfaces.REST;
 
 [Authorize]
 [ApiController]
-[Route("api/watering/device/{deviceId}")]
+[Route("api/v1/watering/device/{deviceId}")]
 [Produces(MediaTypeNames.Application.Json)]
 public class WateringController(IWateringLogQueryService wateringLogQueryService) : ControllerBase
 {
@@ -20,7 +20,6 @@ public class WateringController(IWateringLogQueryService wateringLogQueryService
         var query = new GetWateringHistoryByDeviceIdQuery(deviceId, from, to);
         var logs = (await wateringLogQueryService.Handle(query)).ToList();
 
-        // HU Escenario 3: No hay datos
         if (!logs.Any())
         {
             return NotFound(new { error = "No watering records found for this device.", code = "NO_DATA" });
@@ -28,7 +27,6 @@ public class WateringController(IWateringLogQueryService wateringLogQueryService
 
         var logResources = logs.Select(WateringLogResourceFromEntityAssembler.ToResourceFromEntity);
         
-        // HU Escenario 1 y 2: Calcular KPIs y construir la respuesta final
         var historyResource = new WateringHistoryResource(
             SmartPotId: deviceId,
             Historial: logResources,

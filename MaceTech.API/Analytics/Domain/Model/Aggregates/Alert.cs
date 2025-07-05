@@ -4,7 +4,7 @@ namespace MaceTech.API.Analytics.Domain.Model.Aggregates;
 
 public class Alert
 {
-    public int Id { get; private set; }
+    public int Id { get; }
     public string DeviceId { get; private set; }
     public string AlertType { get; private set; }
     public float TriggerValue { get; private set; }

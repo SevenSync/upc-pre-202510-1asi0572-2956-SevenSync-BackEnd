@@ -2,10 +2,8 @@ using FirebaseAdmin;
 using FirebaseAdmin.Auth;
 using Google.Apis.Auth.OAuth2;
 using MaceTech.API.Analytics.Application.Internal.CommandServices;
-using MaceTech.API.Analytics.Application.Internal.DomainServices;
 using MaceTech.API.Analytics.Application.Internal.QueryServices;
 using MaceTech.API.Analytics.Domain.Repositories;
-using MaceTech.API.Analytics.Domain.Services;
 using MaceTech.API.Analytics.Domain.Services.CommandServices;
 using MaceTech.API.Analytics.Domain.Services.QueriesServices;
 using MaceTech.API.Analytics.Infrastructure.Persistence.EFC.Repositories;
@@ -31,12 +29,6 @@ using MaceTech.API.IAM.Infrastructure.Pipeline.Middleware.Extensions;
 using MaceTech.API.IAM.Infrastructure.Tokens.JWT.Configuration;
 using MaceTech.API.IAM.Interfaces.ACL;
 using MaceTech.API.IAM.Interfaces.ACL.Services;
-using MaceTech.API.Planning.Application.Internal.CommandServices;
-using MaceTech.API.Planning.Application.Internal.QueryServices;
-using MaceTech.API.Planning.Domain.Repositories;
-using MaceTech.API.Planning.Domain.Services.CommandServices;
-using MaceTech.API.Planning.Domain.Services.QueryServices;
-using MaceTech.API.Planning.Infrastructure.Persistence.EFC.Repositories;
 using MaceTech.API.Profiles.Application.Internal.CommandServices;
 using MaceTech.API.Profiles.Application.Internal.QueryServices;
 using MaceTech.API.Profiles.Domain.Repositories;
@@ -56,14 +48,6 @@ using MaceTech.API.SubscriptionsAndPayments.Domain.Services;
 using MaceTech.API.SubscriptionsAndPayments.Infrastructure.Persistence.EFC.Repositories;
 using MaceTech.API.SubscriptionsAndPayments.Infrastructure.Plans.Repository;
 using MaceTech.API.SubscriptionsAndPayments.Infrastructure.Sku;
-using MaceTech.API.Watering.Application.Internal.CommandServices;
-using MaceTech.API.Watering.Application.Internal.QueryServices;
-using MaceTech.API.Watering.Domain.Repositories;
-using MaceTech.API.Watering.Domain.Services.CommandServices;
-using MaceTech.API.Watering.Domain.Services.QueryServices;
-using MaceTech.API.Watering.Infrastructure.Persistence.EFC.Repositories;
-using MaceTech.API.Watering.Interfaces.ACL;
-using MaceTech.API.Watering.Interfaces.ACL.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -97,16 +81,12 @@ builder.Services.AddSingleton(provider =>
     return new StripeClient(key); 
 });
 
-//  Aggiungi i controller.
 builder.Services.AddControllers();
 
-//  Configura gli URL in minuscolo.
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
-//  Aggiungi la connessione al database.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-//  Configura il contesto del database e i livelli di log.
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     if (connectionString == null) return;
@@ -128,7 +108,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     }
 });
 
-//  Configurazione di Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
     {
@@ -167,7 +146,6 @@ builder.Services.AddSwaggerGen(c =>
     }
     );
 
-//  Aggiungi CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAllPolicy", policy => policy.AllowAnyOrigin()
@@ -223,7 +201,6 @@ builder.Services.AddScoped<IKpiQueryService, KpiQueryService>();
 
 var app = builder.Build();
 
-//  Verifica la creazione degli oggetti del database.
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -231,8 +208,7 @@ using (var scope = app.Services.CreateScope())
     context.Database.EnsureCreated();
 }
 
-//  Configura la pipeline delle richieste HTTP.
-//  if (!app.Environment.IsDevelopment())   //  (Ignora questa volta, il professore é vicino)
+//  if (!app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();

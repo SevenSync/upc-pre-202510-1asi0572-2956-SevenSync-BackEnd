@@ -6,7 +6,6 @@ namespace MaceTech.API.Analytics.Domain.Services;
 
 public interface IAnalyticsDomainService
 {
-    // La firma ahora espera los DTOs, no las entidades de otros contextos.
     PotComparisonData CalculateComparisonForDevice(
         string deviceId, 
         IEnumerable<PotRecord> records, 
