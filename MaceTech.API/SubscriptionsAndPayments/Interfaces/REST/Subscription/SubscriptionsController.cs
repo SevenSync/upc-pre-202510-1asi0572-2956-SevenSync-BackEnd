@@ -29,14 +29,6 @@ public class SubscriptionsController(
     private readonly SubscriptionService _stripeSubs = new();
     
     //  |: Functions
-    //  [Authorize]
-    //  [HttpGet("offers")]
-    //  public List<SubscriptionPlan> GetSubscriptionOffers([FromQuery] string language)
-    //  {
-    //      var query = GetPlansQueryFromResourceAssembler.ToQueryFromResource(language);
-    //      return plansQueryService.Handle(query);
-    //  }
-    
     [Authorize]
     [HttpPost("checkout")]
     public async Task<IActionResult> CreateSubscription([FromBody] CheckoutSubscriptionResource resource)

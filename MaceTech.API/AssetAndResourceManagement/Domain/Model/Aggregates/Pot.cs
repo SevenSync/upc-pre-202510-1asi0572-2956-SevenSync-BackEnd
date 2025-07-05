@@ -38,7 +38,7 @@ public class Pot
     public Pot(CreatePotCommand command) { }
     
     //  @Methods
-    public void AssignUser(AssignPotToUserCommand command)
+    public void AssignUser(PotAssignmentCommand command)
     {
         this.IsUserAssigned = true;
         this.Uid = command.Uid;

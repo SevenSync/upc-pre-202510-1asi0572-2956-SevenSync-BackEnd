@@ -40,6 +40,7 @@ using MaceTech.API.Shared.Domain.Events;
 using MaceTech.API.Shared.Domain.Repositories;
 using MaceTech.API.Shared.Infrastructure.Persistence.EFC.Configuration;
 using MaceTech.API.Shared.Infrastructure.Persistence.EFC.Repositories;
+using MaceTech.API.Shared.Infrastructure.Pipeline.Middleware.Extensions;
 using MaceTech.API.SubscriptionsAndPayments.Application.External.Sku.Services;
 using MaceTech.API.SubscriptionsAndPayments.Application.Internal.CommandServices;
 using MaceTech.API.SubscriptionsAndPayments.Application.Internal.QueryServices;
@@ -56,7 +57,6 @@ using TokenService = MaceTech.API.IAM.Infrastructure.Tokens.JWT.Services.TokenSe
 
 var builder = WebApplication.CreateBuilder(args);
 
-//  FireBase
 var firebaseApp = FirebaseApp.Create(new AppOptions
 {
     Credential = GoogleCredential.FromFile(builder.Configuration["Firebase:ServiceAccountPath"])
@@ -66,14 +66,11 @@ builder.Services.AddSingleton(FirebaseApp.DefaultInstance);
 builder.Services.AddSingleton<FirebaseAuth>(sp => FirebaseAuth.GetAuth(sp.GetRequiredService<FirebaseApp>()));
 builder.Services.Configure<FirebaseConfiguration>(builder.Configuration.GetSection("Firebase"));
 
-//  SendGrid
 builder.Services.Configure<SendGridOptions>(builder.Configuration.GetSection("SendGridOptions"));
 builder.Services.AddTransient<IEmailSender, SendGridEmailSender>();
 
-//  MidiatR
 builder.Services.AddMediatR(typeof(UserDeletedEvent).Assembly);
 
-//  Stripe
 StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 builder.Services.AddSingleton(provider =>
 {
@@ -114,7 +111,7 @@ builder.Services.AddSwaggerGen(c =>
         c.SwaggerDoc("v1", new OpenApiInfo
         {
             Title = "MaceTech API",
-            Version = "v1",
+            Version = "v0.3.1a (inDev)",
             Description = "MaceTech API Documentation",
             TermsOfService = new Uri("https://macetech.com/tos"),
             Contact = new OpenApiContact { Name = "MaceTech", Email = "support@macetech.com" },
@@ -174,11 +171,6 @@ builder.Services.AddScoped<IProfileCommandService, ProfileCommandService>();
 builder.Services.AddScoped<IProfileQueryService, ProfileQueryService>();
 builder.Services.AddScoped<IProfilesContextFacade, ProfilesContextFacade>();
 
-//      |: Asset and Resource Management Bounded Context Injection Configuration
-builder.Services.AddScoped<IPotRepository, PotRepository>();
-builder.Services.AddScoped<IPotCommandService, PotCommandService>();
-builder.Services.AddScoped<IPotQueryService, PotQueryService>();
-
 //      |: Subscriptions and Payments Bounded Context Injection Configuration
 builder.Services.AddScoped<ISubscriptionPlansQueryService, SubscriptionsPlansQueryService>();
 builder.Services.AddScoped<ISubscriptionPlansRepository, JsonSubscriptionPlansRepository>();
@@ -187,17 +179,12 @@ builder.Services.AddScoped<ISubscriptionCommandService, SubscriptionCommandServi
 builder.Services.AddScoped<ISubscriptionQueryService, SubscriptionQueryService>();
 builder.Services.AddScoped<ISkuAndPriceIdConverter, SkuAndStipePriceConverter>();
 
-//      |: Analytics Bounded Context Injection Configuration
-builder.Services.AddScoped<IPotRecordRepository, PotRecordRepository>();
-builder.Services.AddScoped<IPotRecordCommandService, PotRecordCommandService>();
-builder.Services.AddScoped<IPotRecordQueryService, PotRecordQueryService>();
-builder.Services.AddScoped<IAlertRepository, AlertRepository>();
-builder.Services.AddScoped<IAlertCommandService, AlertCommandService>();
-builder.Services.AddScoped<IAnalyticsQueryService, AnalyticsQueryService>();
-builder.Services.AddScoped<IAlertQueryService, AlertQueryService>(); 
-builder.Services.AddScoped<IAlertsContextFacade, AlertsContextFacade>();
+//      |: Asset and Resource Management Bounded Context Injection Configuration
+builder.Services.AddScoped<IPotRepository, PotRepository>();
+builder.Services.AddScoped<IPotCommandService, PotCommandService>();
+builder.Services.AddScoped<IPotQueryService, PotQueryService>();
 
-builder.Services.AddScoped<IKpiQueryService, KpiQueryService>();
+
 
 var app = builder.Build();
 
@@ -216,6 +203,7 @@ using (var scope = app.Services.CreateScope())
 
 app.UseCors("AllowAllPolicy");
 app.UseRequestAuthorization();
+app.UseCustomExceptionHandler();
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
