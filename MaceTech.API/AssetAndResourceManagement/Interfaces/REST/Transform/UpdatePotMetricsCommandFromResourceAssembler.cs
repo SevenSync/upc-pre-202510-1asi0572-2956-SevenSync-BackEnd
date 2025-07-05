@@ -5,10 +5,10 @@ namespace MaceTech.API.AssetAndResourceManagement.Interfaces.REST.Transform;
 
 public static class UpdatePotMetricsCommandFromResourceAssembler
 {
-    public static UpdatePotMetricsCommand ToCommandFromResource(UpdatePotMetricsResource resource)
+    public static UpdatePotMetricsCommand ToCommandFromResource(long potId, UpdatePotMetricsResource resource)
     {
         return new UpdatePotMetricsCommand(
-            resource.PotId,
+            potId,
             resource.BatteryLevel,
             resource.WaterLevel,
             resource.Humidity,

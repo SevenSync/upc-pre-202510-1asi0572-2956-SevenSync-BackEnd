@@ -1,3 +1,3 @@
 namespace MaceTech.API.AssetAndResourceManagement.Domain.Model.Commands;
 
-public record AssignPotToUserCommand(string Uid, long PotId, string Name, string Location);
+public record AssignPotToUserCommand(long PotId, string Uid, string Name, string Location);

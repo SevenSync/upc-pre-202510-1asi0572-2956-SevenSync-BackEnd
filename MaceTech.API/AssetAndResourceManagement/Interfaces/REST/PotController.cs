@@ -20,7 +20,7 @@ public class PotController(
     IIamContextFacade iamContextFacade
     ): ControllerBase
 {
-    [HttpPost("create")]
+    [HttpPost]
     public async Task<IActionResult> CreatePot([FromBody] CreatePotResource resource)
     {
         var result = await potCommandService.Handle(new CreatePotCommand());
@@ -33,37 +33,7 @@ public class PotController(
     }
     
     [Authorize]
-    [HttpPatch("assign")]
-    public async Task<IActionResult> AssignPotToUser([FromBody] AssignPotToUserResource resource)
-    {
-        var uid = iamContextFacade.GetUserUidFromContext(this.HttpContext);
-        var command = AssignPotToUserCommandFromResourceAssembler.ToCommandFromResource(uid, resource);
-        var result = await potCommandService.Handle(command);
-        if (result == null)
-        {
-            return BadRequest(new PotAssignedResponse(Success: false));
-        }
-
-        return Ok(new PotAssignedResponse(Success: true));
-    }
-    
-    [HttpPut("update-metrics")]
-    public async Task<IActionResult> UpdatePotInformation([FromBody] UpdatePotMetricsResource resource)
-    {
-        //  The pot must have an ID (potId) and some kind of key (string).
-        //  Let's keep it simple for now~
-        var command = UpdatePotMetricsCommandFromResourceAssembler.ToCommandFromResource(resource);
-        var result = await potCommandService.Handle(command);
-        if (result == null)
-        {
-            return BadRequest(new PotMetricsUpdatedResponse(Success: false));
-        }
-        
-        return Ok(new PotMetricsUpdatedResponse(Success: true));
-    }
-    
-    [Authorize]
-    [HttpGet("get/{potId:long}")]
+    [HttpGet("{potId:long}")]
     public async Task<IActionResult> GetPot(long potId)
     {
         iamContextFacade.GetUserUidFromContext(this.HttpContext);
@@ -76,10 +46,10 @@ public class PotController(
 
         return Ok(pot);
     }
-
+    
     [Authorize]
-    [HttpGet("get-all")]
-    public async Task<IActionResult> GetAllPots()
+    [HttpGet]
+    public async Task<IActionResult> GetPots()
     {
         var uid = iamContextFacade.GetUserUidFromContext(this.HttpContext);
         var query = GetPotsByUserIdQueryFromResourceAssembler.ToQueryFromResource(uid);
@@ -87,7 +57,7 @@ public class PotController(
         return Ok(result);
     }
     
-    [HttpDelete("delete/{potId:long}")]
+    [HttpDelete("{potId:long}")]
     public async Task<IActionResult> DeletePot(long potId)
     {
         //  Actually, just the stuff is allowed to delete pots.
@@ -102,25 +72,74 @@ public class PotController(
         
         return Ok(new PotDeletedResponse(Success: true));
     }
+    
+    [Authorize]
+    [HttpPut("{potId:long}/assignee")]
+    public async Task<IActionResult> AssignPot(
+        long potId,
+        [FromBody] AssignPotToUserResource resource
+        )
+    {
+        var uid = iamContextFacade.GetUserUidFromContext(this.HttpContext);
+        var command = AssignPotToUserCommandFromResourceAssembler.ToCommandFromResource(potId, uid, resource);
+        var result = await potCommandService.Handle(command);
+        if (result == null)
+        {
+            return BadRequest(new PotAssignedResponse(Success: false));
+        }
 
+        return Ok(new PotAssignedResponse(Success: true));
+    }
+    
     [Authorize]
-    [HttpPatch("unassign/{potId:long}")]
-    public async Task<IActionResult> UnassignPotFromUser(long potId)
+    [HttpDelete("{potId:long}/assignee")]
+    public async Task<IActionResult> UnassignPot(long potId)
     {
+        //  var uid = iamContextFacade.GetUserUidFromContext(this.HttpContext);
+        //  var command = 
+        
+        //  var command = AssignPotToUserCommandFromResourceAssembler.ToCommandFromResource(potId, uid, resource);
+        //  var result = await potCommandService.Handle(command);
+        //  if (result == null)
+        //  {
+        //      return BadRequest(new PotAssignedResponse(Success: false));
+        //  }
+        //  
+        //  return Ok(new PotAssignedResponse(Success: true));
+        return Ok();
+    }
+    
+    [HttpPatch("{potId:long}/metrics")]
+    public async Task<IActionResult> UpdateMetrics(
+        long potId,
+        [FromBody] UpdatePotMetricsResource resource
+        )
+    {
+        //  The pot must have an ID (potId) and some kind of key (string).
+        //  Let's keep it simple for now~
+        var command = UpdatePotMetricsCommandFromResourceAssembler.ToCommandFromResource(potId, resource);
+        var result = await potCommandService.Handle(command);
+        if (result == null)
+        {
+            return BadRequest(new PotMetricsUpdatedResponse(Success: false));
+        }
+        
+        return Ok(new PotMetricsUpdatedResponse(Success: true));
+    }
+    
+    [Authorize]
+    [HttpPut("{potId:long}/plant")]
+    public async Task<IActionResult> LinkPlant(long potId)
+    {
+        // to be implemented
         return Ok();
     }
     
     [Authorize]
-    [HttpPatch("link-plant")]
-    public async Task<IActionResult> LinkPotToPlant()
+    [HttpDelete("{potId:long}/plant")]
+    public async Task<IActionResult> UnlinkPlant(long potId)
     {
-        return Ok();
-    }
-    
-    [Authorize]
-    [HttpPatch("unlink-plant")]
-    public async Task<IActionResult> UnlinkPotFromPlant()
-    {
+        // to be implemented
         return Ok();
     }
 }

@@ -5,8 +5,8 @@ namespace MaceTech.API.AssetAndResourceManagement.Interfaces.REST.Transform;
 
 public static class AssignPotToUserCommandFromResourceAssembler
 {
-    public static AssignPotToUserCommand ToCommandFromResource(string uid, AssignPotToUserResource resource)
+    public static AssignPotToUserCommand ToCommandFromResource(long potId, string uid, AssignPotToUserResource resource)
     {
-        return new AssignPotToUserCommand(uid, resource.PotId, resource.Name, resource.Location);
+        return new AssignPotToUserCommand(potId, uid, resource.Name, resource.Location);
     }
 }
