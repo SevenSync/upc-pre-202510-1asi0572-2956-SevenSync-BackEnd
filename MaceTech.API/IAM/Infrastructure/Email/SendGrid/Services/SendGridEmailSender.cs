@@ -1,5 +1,3 @@
-using System.Net;
-using System.Net.Mail;
 using MaceTech.API.IAM.Application.External.Email.Models;
 using MaceTech.API.IAM.Application.External.Email.Services;
 using MaceTech.API.IAM.Infrastructure.Email.SendGrid.Configuration;

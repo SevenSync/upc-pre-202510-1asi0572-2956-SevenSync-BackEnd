@@ -1,5 +1,4 @@
 using MaceTech.API.Profiles.Domain.Model.Aggregates;
-using MaceTech.API.Profiles.Domain.Model.ValueObjects;
 using MaceTech.API.Profiles.Domain.Repositories;
 using MaceTech.API.Shared.Infrastructure.Persistence.EFC.Configuration;
 using MaceTech.API.Shared.Infrastructure.Persistence.EFC.Repositories;

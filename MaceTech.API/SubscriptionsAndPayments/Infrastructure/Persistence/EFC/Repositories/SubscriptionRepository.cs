@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using MaceTech.API.Shared.Infrastructure.Persistence.EFC.Configuration;
 using MaceTech.API.Shared.Infrastructure.Persistence.EFC.Repositories;
 using MaceTech.API.SubscriptionsAndPayments.Domain.Model.Aggregates;

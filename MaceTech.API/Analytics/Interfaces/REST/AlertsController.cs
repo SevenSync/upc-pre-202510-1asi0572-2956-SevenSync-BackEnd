@@ -1,19 +1,20 @@
 using System.Net.Mime;
 using MaceTech.API.Analytics.Domain.Services.CommandServices;
 using MaceTech.API.Analytics.Interfaces.REST.Resources;
+using MaceTech.API.Analytics.Interfaces.REST.Transform;
 using MaceTech.API.IAM.Infrastructure.Pipeline.Middleware.Attributes;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MaceTech.API.Analytics.Interfaces.REST.Transform;
+namespace MaceTech.API.Analytics.Interfaces.REST;
 
 [Authorize]
 [ApiController]
-[Route("api/alerts/device/{deviceId}")]
+[Route("api/v1/alerts/device/{deviceId}")]
 [Produces(MediaTypeNames.Application.Json)]
 public class AlertsController(IAlertCommandService alertCommandService) : ControllerBase
 {
     [HttpPost]
-    [AllowAnonymous] // El Edge Application usará API Key, manejado por tu middleware
+    [AllowAnonymous]
     public async Task<IActionResult> CreateAlert(string deviceId, [FromBody] CreateAlertResource resource)
     {
         var command = CreateAlertCommandFromResourceAssembler.ToCommandFromResource(resource, deviceId);

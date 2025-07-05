@@ -10,27 +10,24 @@ public class PlantDataSeeder
 {
     public async Task SeedAsync(AppDbContext context, string jsonFilePath)
     {
-        // Solo ejecuta el seeder si la tabla de Plantas está vacía.
         if (context.Plants.Any())
         {
-            Console.WriteLine("La tabla de plantas ya contiene datos. No se requiere seeding.");
+            Console.WriteLine("Plant's table already contains data. Skipping seeding.");
             return;
         }
 
-        Console.WriteLine("Iniciando seeding de datos de plantas desde JSON...");
+        Console.WriteLine("Starting seeding with Json file...");
         await using var stream = File.OpenRead(jsonFilePath);
         
-        // Configuramos el deserializador para que no sea sensible a mayúsculas/minúsculas.
         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         var plantsDto = await JsonSerializer.DeserializeAsync<List<PlantSeedDto>>(stream, options);
 
         if (plantsDto == null || !plantsDto.Any())
         {
-            Console.WriteLine("Error: no se pudieron deserializar los datos de las plantas o el archivo está vacío.");
+            Console.WriteLine("Error: Couldn't deserialize the JSON or no plants found.");
             return;
         }
 
-        // Mapeamos los DTOs del JSON a nuestras entidades de dominio 'Plant'.
         var plants = plantsDto.Select(dto => new Plant(
             dto.NombreComun,
             dto.NombreCientifico,
@@ -45,16 +42,12 @@ public class PlantDataSeeder
             )
         )).ToList();
 
-        // Añadimos las nuevas plantas a la base de datos y guardamos los cambios.
         await context.Plants.AddRangeAsync(plants);
         await context.SaveChangesAsync();
-        Console.WriteLine($"Seeding completado. Se añadieron {plants.Count} plantas a la base de datos.");
+        Console.WriteLine($"Seeding completed. Se añadieron {plants.Count} plantas a la base de datos.");
     }
 }
 
-// --- DTOs Auxiliares para Deserializar el JSON ---
-// Estos 'file-local types' solo son visibles dentro de este archivo.
-// Se usan para mapear la estructura y nombres de tu archivo JSON.
 file class PlantSeedDto
 {
     [JsonPropertyName("nombre_comun")] public string NombreComun { get; set; } = string.Empty;

@@ -17,10 +17,8 @@ public class AlertRepository(AppDbContext context) : BaseRepository<Alert>(conte
     
     public async Task<IEnumerable<Alert>> FindByDeviceIdWithFiltersAsync(string deviceId, DateTime? fromDate, DateTime? toDate, string? alertType)
     {
-        // Empezamos con una consulta base que filtra por deviceId
         var query = Context.Set<Alert>().Where(a => a.DeviceId == deviceId);
 
-        // Aplicamos los filtros opcionales de forma condicional
         if (fromDate.HasValue)
         {
             query = query.Where(a => a.Timestamp >= fromDate.Value);
@@ -35,8 +33,6 @@ public class AlertRepository(AppDbContext context) : BaseRepository<Alert>(conte
         {
             query = query.Where(a => a.AlertType == alertType);
         }
-
-        // Ordenamos por fecha descendente y ejecutamos la consulta
         return await query.OrderByDescending(a => a.Timestamp).ToListAsync();
     }
 }

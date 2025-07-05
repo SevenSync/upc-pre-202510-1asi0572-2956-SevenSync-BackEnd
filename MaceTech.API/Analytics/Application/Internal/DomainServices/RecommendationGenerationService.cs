@@ -9,26 +9,25 @@ public class RecommendationGenerationService : IRecommendationGenerationService
     {
         return alertType.ToLower() switch
         {
-            "humedad_baja" => new Recommendation(
-                "Regar ahora. Aumentar frecuencia en 30%.",
-                "Crítica",
-                "/guias/regar"
+            "low_humidity" => new Recommendation(
+                "Watering now. Add 30% to frequency.",
+                "Critical",
+                "/guides/water"
             ),
-            "temperatura_alta" => new Recommendation(
-                "Mover a sombra. Temperatura ideal: 18-25°C.",
+            "high_temperature" => new Recommendation(
+                "Move to a shadow. Ideal temperature: 18-25°C.",
                 "Media",
-                "/guias/mover-sombra"
+                "/guides/move-to-shadow"
             ),
-            "ph_bajo" => new Recommendation(
-                "Añadir cal agrícola (1 cucharada por litro de agua).",
-                "Crítica",
-                "/guias/corregir-ph"
+            "low_ph" => new Recommendation(
+                "Add agricultural lime (1 tablespoon per liter of water)",
+                "Critical",
+                "/guides/control-ph"
             ),
-            // Caso por defecto si llega un tipo de alerta no reconocido
             _ => new Recommendation(
-                "Se ha detectado una anomalía no identificada. Revise los parámetros manualmente.",
-                "Baja",
-                "/guias/diagnostico-general"
+                "There was an anomaly detected. Check the parameter manually.",
+                "Low",
+                "/guides/general-diagnosis"
             )
         };
     }

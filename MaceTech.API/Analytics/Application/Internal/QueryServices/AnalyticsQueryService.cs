@@ -23,7 +23,6 @@ public class AnalyticsQueryService(
 
         foreach (var deviceId in query.DeviceIds)
         {
-            // La lógica de orquestación ahora es mucho más legible.
             var recordsTask = potRecordRepository.GetRecordsByDeviceIdAndDateRangeAsync(deviceId, fromDate, toDate);
             var alertsTask = alertsContextFacade.FetchAlertsByDeviceIdAndDateRange(deviceId, fromDate, toDate);
             var wateringTask = wateringLogContextFacade.GetWateringLogHistoryForDevice(deviceId, fromDate, toDate);

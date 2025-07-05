@@ -1,9 +1,8 @@
 namespace MaceTech.API.Analytics.Domain.Model.Aggregates;
 
-// Representa una única lectura de telemetría.
 public class PotRecord
 {
-    public long Id { get; private set; }
+    public long Id { get; }
     public string DeviceId { get; private set; }
     public float Temperature { get; private set; }
     public float Humidity { get; private set; }
@@ -12,7 +11,7 @@ public class PotRecord
     public float Ph { get; private set; }
     public DateTime CreatedAt { get; private set; }
 
-    public PotRecord() // Requerido por Entity Framework Core
+    public PotRecord()
     {
         DeviceId = string.Empty;
     }

@@ -11,7 +11,6 @@ using MaceTech.API.IAM.Infrastructure.Pipeline.Middleware.Attributes;
 using MaceTech.API.IAM.Interfaces.REST.Resources;
 using MaceTech.API.IAM.Interfaces.REST.Responses;
 using MaceTech.API.IAM.Interfaces.REST.Transform;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using PasswordRecoveryResponse = MaceTech.API.IAM.Interfaces.REST.Responses.PasswordRecoveryResponse;

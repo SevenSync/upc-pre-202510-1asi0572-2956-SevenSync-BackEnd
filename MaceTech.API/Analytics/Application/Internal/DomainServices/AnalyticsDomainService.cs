@@ -26,18 +26,15 @@ public class AnalyticsDomainService : IAnalyticsDomainService
             WeeklyAvgTemperature: potRecords.Average(r => r.Temperature),
             WeeklyAvgHumidity: potRecords.Average(r => r.Humidity),
             WeeklyAvgPh: potRecords.Average(r => r.Ph),
-            // Ahora trabajamos con las propiedades del DTO
             TotalWaterVolumeMl: wateringLogsList.Select(w => w.WaterVolumeMl).Sum(),
-            CriticalAlertsCount: alertsList.Count(a => a.Urgency == "Crítica")
+            CriticalAlertsCount: alertsList.Count(a => a.Urgency == "Critical")
         );
     }
     
     public WaterSavedKpi CalculateWaterSavedKpi(string deviceId, DateTime date, IEnumerable<WateringLogDataDto> dailyWateringLogs)
     {
-        // Calculamos el total de agua usada realmente por MaceTech en el día.
         var actualWateringMl = dailyWateringLogs.Select(log => log.WaterVolumeMl).Sum();
 
-        // Calculamos el ahorro.
         var waterSavedMl = StandardDailyWateringMl - actualWateringMl;
 
         return new WaterSavedKpi(
@@ -45,7 +42,7 @@ public class AnalyticsDomainService : IAnalyticsDomainService
             date,
             StandardDailyWateringMl,
             actualWateringMl,
-            waterSavedMl > 0 ? waterSavedMl : 0 // El ahorro no puede ser negativo
+            waterSavedMl > 0 ? waterSavedMl : 0
         );
     }
 }

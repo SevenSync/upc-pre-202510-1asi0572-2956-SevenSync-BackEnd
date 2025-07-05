@@ -1,4 +1,3 @@
-using MaceTech.API.Analytics.Domain.Model.Aggregates;
 using MaceTech.API.Analytics.Domain.Model.Queries;
 using MaceTech.API.Analytics.Domain.Services.QueriesServices;
 using MaceTech.API.Analytics.Interfaces.ACL.DTOs;
@@ -12,7 +11,6 @@ public class AlertsContextFacade(IAlertQueryService alertQueryService) : IAlerts
         var query = new GetAlertsByDeviceIdAndDateRangeQuery(deviceId, fromDate, toDate);
         var alerts = await alertQueryService.Handle(query);
 
-        // Mapeo de la entidad de dominio 'Alert' al 'AlertDataDto'
         return alerts.Select(alert => new AlertDataDto(alert.GeneratedRecommendation.Urgency));
     }
 }

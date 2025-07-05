@@ -12,7 +12,6 @@ namespace MaceTech.API.Shared.Infrastructure.Persistence.EFC.Configuration;
 
 public class AppDbContext(DbContextOptions options) : DbContext(options)
 {
-    // --- DbSets para cada Aggregate Root ---
     public DbSet<User> Users { get; set; }
     public DbSet<Profile> Profiles { get; set; }
     public DbSet<PotRecord> PotRecords { get; set; }
@@ -22,7 +21,6 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
     protected override void OnConfiguring(DbContextOptionsBuilder builder)
     {
         base.OnConfiguring(builder);
-        // Este interceptor gestionará automáticamente las propiedades 'CreatedAt' y 'UpdatedAt'
         builder.AddCreatedUpdatedInterceptor();
     }
 
@@ -67,7 +65,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
 
         builder.UseSnakeCaseWithPluralizedTableNamingConvention();
         
-        //  |: SubscriptionAndPayments Context
+        //  |: Subscriptions Context
         builder.Entity<Subscription>().HasKey(s => s.Id);
         builder.Entity<Subscription>().Property(s => s.Id).IsRequired().ValueGeneratedOnAdd();
         builder.Entity<Subscription>().Property(s => s.Uid).IsRequired();
@@ -95,7 +93,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         builder.Entity<Pot>().Property(s => s.CreatedAt).IsRequired();
 
         
-        // --- Configuración de Analytics: PotRecord (Limpiada) ---
+        //  |: Analytics Context
         builder.Entity<PotRecord>().ToTable("PotRecords");
         builder.Entity<PotRecord>().HasKey(p => p.Id);
         builder.Entity<PotRecord>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
@@ -105,11 +103,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         builder.Entity<PotRecord>().Property(p => p.Light).IsRequired();
         builder.Entity<PotRecord>().Property(p => p.Salinity).IsRequired();
         builder.Entity<PotRecord>().Property(p => p.Ph).IsRequired();
-        // La propiedad 'CreatedAt' será manejada por el interceptor, no necesita configuración extra.
         builder.Entity<PotRecord>().Property(p => p.CreatedAt).IsRequired();
-
-
-        // --- Configuración de Analytics: Alert (Corregida y Completa) ---
         builder.Entity<Alert>().ToTable("Alerts");
         builder.Entity<Alert>().HasKey(a => a.Id);
         builder.Entity<Alert>().Property(a => a.Id).IsRequired().ValueGeneratedOnAdd();
@@ -117,8 +111,6 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         builder.Entity<Alert>().Property(a => a.AlertType).IsRequired();
         builder.Entity<Alert>().Property(a => a.TriggerValue).IsRequired();
         builder.Entity<Alert>().Property(a => a.Timestamp).IsRequired();
-        
-        // Configuración para el Value Object 'Recommendation'
         builder.Entity<Alert>().OwnsOne(a => a.GeneratedRecommendation, r =>
         {
             r.Property(p => p.Text).HasColumnName("RecommendationText");
@@ -126,7 +118,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
             r.Property(p => p.GuideUrl).HasColumnName("GuideUrl");
         });
         
-        //  |: Planning Context: Plant (El catálogo general)
+        //  |: Planning Context
         builder.Entity<Plant>().ToTable("Plants");
         builder.Entity<Plant>().HasKey(p => p.Id);
         builder.Entity<Plant>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
@@ -135,7 +127,6 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         builder.Entity<Plant>().Property(p => p.ImageUrl).HasMaxLength(255);
         builder.Entity<Plant>().Property(p => p.Description).HasMaxLength(1000);
         
-        // Configuración para el Value Object 'OptimalParameters' anidado en Plant
         builder.Entity<Plant>().OwnsOne(p => p.OptimalParameters, parameters =>
         {
             parameters.OwnsOne(po => po.TemperaturaAmbiente, temp =>
@@ -164,21 +155,15 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
                 ph.Property(p => p.Max).HasColumnName("OptimalPhMax");
             });
         });
-        
-        //  |: Planning Context: DevicePlant (La planta específica del usuario/maceta)
         builder.Entity<DevicePlant>().ToTable("DevicePlants");
         builder.Entity<DevicePlant>().HasKey(dp => dp.Id);
         builder.Entity<DevicePlant>().Property(dp => dp.Id).IsRequired().ValueGeneratedOnAdd();
         builder.Entity<DevicePlant>().Property(dp => dp.DeviceId).IsRequired().HasMaxLength(50);
-        
-        // Relación: Un DevicePlant tiene una Plant del catálogo.
         builder.Entity<DevicePlant>()
             .HasOne(dp => dp.Plant)
-            .WithMany() // Una planta del catálogo puede ser elegida por muchos DevicePlants
+            .WithMany()
             .HasForeignKey(dp => dp.PlantId)
             .IsRequired();
-            
-        // Configuración para el Value Object 'CustomThresholds' anidado en DevicePlant
         builder.Entity<DevicePlant>().OwnsOne(dp => dp.CustomThresholds, thresholds =>
         {
             thresholds.OwnsOne(t => t.TemperaturaAmbiente, temp =>
@@ -191,11 +176,23 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
                 hum.Property(p => p.Min).HasColumnName("CustomHumidityMin");
                 hum.Property(p => p.Max).HasColumnName("CustomHumidityMax");
             });
-            // ... (y así para los otros umbrales personalizados)
+            thresholds.OwnsOne(t => t.Luminosidad, lum =>
+            {
+                lum.Property(p => p.Min).HasColumnName("CustomLuminosityMin");
+                lum.Property(p => p.Max).HasColumnName("CustomLuminosityMax");
+            });
+            thresholds.OwnsOne(t => t.SalinidadSuelo, sal =>
+            {
+                sal.Property(p => p.Min).HasColumnName("CustomSalinityMin");
+                sal.Property(p => p.Max).HasColumnName("CustomSalinityMax");
+            });
+            thresholds.OwnsOne(t => t.PhSuelo, ph =>
+            {
+                ph.Property(p => p.Min).HasColumnName("CustomPhMin");
+                ph.Property(p => p.Max).HasColumnName("CustomPhMax");
+            });
         });
 
-        
-        // Aplica la convención de nombres al final de todo
         builder.UseSnakeCaseWithPluralizedTableNamingConvention();
     }
 }

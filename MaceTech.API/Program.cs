@@ -1,6 +1,14 @@
 using FirebaseAdmin;
 using FirebaseAdmin.Auth;
 using Google.Apis.Auth.OAuth2;
+using MaceTech.API.Analytics.Application.Internal.CommandServices;
+using MaceTech.API.Analytics.Application.Internal.QueryServices;
+using MaceTech.API.Analytics.Domain.Repositories;
+using MaceTech.API.Analytics.Domain.Services.CommandServices;
+using MaceTech.API.Analytics.Domain.Services.QueriesServices;
+using MaceTech.API.Analytics.Infrastructure.Persistence.EFC.Repositories;
+using MaceTech.API.Analytics.Interfaces.ACL;
+using MaceTech.API.Analytics.Interfaces.ACL.Services;
 using MaceTech.API.AssetAndResourceManagement.Application.Internal.CommandServices;
 using MaceTech.API.AssetAndResourceManagement.Application.Internal.QueryServices;
 using MaceTech.API.AssetAndResourceManagement.Domain.Repositories;
@@ -187,9 +195,11 @@ using (var scope = app.Services.CreateScope())
     context.Database.EnsureCreated();
 }
 
-app.UseSwagger();
-app.UseSwaggerUI();
-
+//  if (!app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.UseCors("AllowAllPolicy");
 app.UseRequestAuthorization();

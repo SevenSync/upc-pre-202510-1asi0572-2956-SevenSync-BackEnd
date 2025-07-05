@@ -1,6 +1,7 @@
 using MaceTech.API.Analytics.Domain.Model.Aggregates;
 using MaceTech.API.Analytics.Domain.Model.Commands;
 using MaceTech.API.Analytics.Domain.Repositories;
+using MaceTech.API.Analytics.Domain.Services.CommandServices;
 using MaceTech.API.Shared.Domain.Repositories;
 
 namespace MaceTech.API.Analytics.Application.Internal.CommandServices;
@@ -18,7 +19,6 @@ public class PotRecordCommandService(IPotRecordRepository potRecordRepository, I
         }
         catch (Exception e)
         {
-            // Logging de errores
             Console.WriteLine($"An error occurred while creating the pot record: {e.Message}");
             return null;
         }

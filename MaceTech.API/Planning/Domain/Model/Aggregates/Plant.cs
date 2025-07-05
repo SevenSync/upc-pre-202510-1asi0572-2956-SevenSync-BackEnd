@@ -15,10 +15,8 @@ public class Plant(
     public string ImageUrl { get; private set; } = imageUrl;
     public string Description { get; private set; } = description;
 
-    // La entidad Plant "posee" un Value Object de parámetros óptimos.
     public OptimalParameters OptimalParameters { get; private set; } = optimalParameters;
 
-    // Constructor vacío requerido por Entity Framework Core para la materialización.
     public Plant() : this(string.Empty, string.Empty, string.Empty, string.Empty, new OptimalParameters(new Range<double>(0,0), new Range<int>(0,0), new Range<int>(0,0), new Range<double>(0,0), new Range<double>(0,0)))
     {
     }

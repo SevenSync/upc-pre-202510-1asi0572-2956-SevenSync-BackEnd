@@ -8,12 +8,11 @@ public class WateringLog
     public int DurationSeconds { get; private set; }
     public double WaterVolumeMl { get; private set; }
     
-    // Dato obtenido del contexto de Analytics
     public float InitialHumidity { get; private set; } 
     public float FinalHumidity { get; private set; }
     public string Result { get; private set; }
     
-    private const double FLOW_RATE_ML_PER_SECOND = 415; // Caudal promedio de la válvula
+    private const double FlowRateMlPerSecond = 415;
 
     public WateringLog() { /* EF Core */ DeviceId = string.Empty; Result = string.Empty; }
 
@@ -22,9 +21,9 @@ public class WateringLog
         DeviceId = deviceId;
         Timestamp = DateTime.UtcNow;
         DurationSeconds = durationSeconds;
-        WaterVolumeMl = durationSeconds * FLOW_RATE_ML_PER_SECOND;
+        WaterVolumeMl = durationSeconds * FlowRateMlPerSecond;
         InitialHumidity = initialHumidity;
         FinalHumidity = finalHumidity;
-        Result = success ? "éxito" : "fallo";
+        Result = success ? "Success" : "Failed";
     }
 }

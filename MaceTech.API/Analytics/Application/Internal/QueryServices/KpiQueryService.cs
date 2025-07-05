@@ -7,19 +7,17 @@ using MaceTech.API.Analytics.Interfaces.ACL.Services;
 namespace MaceTech.API.Analytics.Application.Internal.QueryServices;
 
 public class KpiQueryService(
-    WateringLogContextFacade wateringContextFacade,
+    WateringLogContextFacade wateringLogContextFacade,
     IAnalyticsDomainService analyticsDomainService) : IKpiQueryService
 {
+    
     public async Task<WaterSavedKpi> Handle(GetWaterSavedKpiQuery query)
     {
-        // 1. Definir el rango de tiempo para la consulta (un día completo).
-        var fromDate = query.Date.Date; // Inicio del día (00:00:00)
-        var toDate = fromDate.AddDays(1).AddTicks(-1); // Fin del día (23:59:59.999...)
+        var fromDate = query.Date.Date;
+        var toDate = fromDate.AddDays(1).AddTicks(-1);
 
-        // 2. Usar la fachada para obtener los datos de riego de ese día.
-        var dailyWateringLogs = await wateringContextFacade.FetchWateringLogsByDeviceIdAndDateRange(query.DeviceId, fromDate, toDate);
+        var dailyWateringLogs = await wateringLogContextFacade.GetWateringLogHistoryForDevice(query.DeviceId, fromDate, toDate);
 
-        // 3. Pasar los datos al servicio de dominio para que haga el cálculo.
         var kpi = analyticsDomainService.CalculateWaterSavedKpi(query.DeviceId, query.Date.Date, dailyWateringLogs);
 
         return kpi;

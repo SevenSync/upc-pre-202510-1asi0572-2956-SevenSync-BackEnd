@@ -18,7 +18,7 @@ public static class DevicePlantResourceFromEntityAssembler
             entity.Id,
             entity.DeviceId,
             entity.PlantId,
-            entity.Plant.CommonName, // Gracias al .Include() del repositorio, esto no será nulo
+            entity.Plant.CommonName,
             thresholds
         );
     }

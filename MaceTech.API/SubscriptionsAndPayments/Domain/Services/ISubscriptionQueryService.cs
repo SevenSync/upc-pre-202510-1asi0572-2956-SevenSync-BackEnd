@@ -1,6 +1,5 @@
 using MaceTech.API.SubscriptionsAndPayments.Domain.Model.Aggregates;
 using MaceTech.API.SubscriptionsAndPayments.Domain.Model.Queries;
-using MaceTech.API.SubscriptionsAndPayments.Domain.Model.ValueObjects;
 
 namespace MaceTech.API.SubscriptionsAndPayments.Domain.Services;
 
