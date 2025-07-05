@@ -95,18 +95,15 @@ public class PotController(
     [HttpDelete("{potId:long}/assignee")]
     public async Task<IActionResult> UnassignPot(long potId)
     {
-        //  var uid = iamContextFacade.GetUserUidFromContext(this.HttpContext);
-        //  var command = 
+        var uid = iamContextFacade.GetUserUidFromContext(this.HttpContext);
+        var command = UnassignPotFromUserCommandFromResourceAssembler.ToCommandFromResource(potId, uid);
+        var result = await potCommandService.Handle(command);
+        if (result == null)
+        {
+            return BadRequest(new PotUnassignedResponse(Success: false));
+        }
         
-        //  var command = AssignPotToUserCommandFromResourceAssembler.ToCommandFromResource(potId, uid, resource);
-        //  var result = await potCommandService.Handle(command);
-        //  if (result == null)
-        //  {
-        //      return BadRequest(new PotAssignedResponse(Success: false));
-        //  }
-        //  
-        //  return Ok(new PotAssignedResponse(Success: true));
-        return Ok();
+        return Ok(new PotUnassignedResponse(Success: true));
     }
     
     [HttpPatch("{potId:long}/metrics")]

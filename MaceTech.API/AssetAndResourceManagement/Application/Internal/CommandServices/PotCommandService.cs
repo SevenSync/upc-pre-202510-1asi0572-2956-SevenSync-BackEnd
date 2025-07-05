@@ -25,7 +25,7 @@ public class PotCommandService(
             return null;
         }
     }
-    public async Task<Pot?> Handle(AssignPotToUserCommand command)
+    public async Task<Pot?> Handle(PotAssignmentCommand command)
     {
         var pot = await repository.FindPotByIdAsync(command.PotId);
         if (pot == null) return null;
@@ -67,6 +67,23 @@ public class PotCommandService(
         try
         {
             pot.Delete();
+            repository.Update(pot);
+            await unitOfWork.CompleteAsync();
+            return pot;
+        }
+        catch (Exception ex)
+        {
+            return null;
+        }
+    }
+    public async Task<Pot?> Handle(UnassignPotFromUserCommand command)
+    {
+        var pot = await repository.FindPotByIdAsync(command.PotId);
+        if (pot == null) return null;
+
+        try
+        {
+            pot.UnassignPlant();
             repository.Update(pot);
             await unitOfWork.CompleteAsync();
             return pot;

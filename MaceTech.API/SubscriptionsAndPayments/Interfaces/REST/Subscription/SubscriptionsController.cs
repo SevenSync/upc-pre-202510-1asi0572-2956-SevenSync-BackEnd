@@ -5,11 +5,9 @@ using MaceTech.API.SubscriptionsAndPayments.Application.External.Sku.Requests;
 using MaceTech.API.SubscriptionsAndPayments.Application.External.Sku.Services;
 using MaceTech.API.SubscriptionsAndPayments.Domain.Model.Commands;
 using MaceTech.API.SubscriptionsAndPayments.Domain.Model.Queries;
-using MaceTech.API.SubscriptionsAndPayments.Domain.Model.ValueObjects;
 using MaceTech.API.SubscriptionsAndPayments.Domain.Services;
 using MaceTech.API.SubscriptionsAndPayments.Interfaces.REST.Subscription.Resources;
 using MaceTech.API.SubscriptionsAndPayments.Interfaces.REST.Subscription.Responses;
-using MaceTech.API.SubscriptionsAndPayments.Interfaces.REST.Subscription.Transform;
 using Microsoft.AspNetCore.Mvc;
 using Stripe;
 using Stripe.Checkout;
@@ -31,14 +29,6 @@ public class SubscriptionsController(
     private readonly SubscriptionService _stripeSubs = new();
     
     //  |: Functions
-    //  [Authorize]
-    //  [HttpGet("offers")]
-    //  public List<SubscriptionPlan> GetSubscriptionOffers([FromQuery] string language)
-    //  {
-    //      var query = GetPlansQueryFromResourceAssembler.ToQueryFromResource(language);
-    //      return plansQueryService.Handle(query);
-    //  }
-    
     [Authorize]
     [HttpPost("checkout")]
     public async Task<IActionResult> CreateSubscription([FromBody] CheckoutSubscriptionResource resource)
