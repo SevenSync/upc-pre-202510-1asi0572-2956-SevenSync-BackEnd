@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using MaceTech.API.ARM.Domain.Model.Commands;
+using MaceTech.API.ARM.Domain.Model.Constants;
 using MaceTech.API.ARM.Domain.Model.Enums;
 using MaceTech.API.Shared.Domain.Models.Abstractions;
 
@@ -9,10 +10,8 @@ public class Pot : AuditEntity
 {
     //  @Properties
     public long Id { get; set; }
-    public bool IsUserAssigned { get; set; } = false;
-    public string Uid { get; set; } = string.Empty;
-    public bool IsPlantLinked { get; set; } = false;
-    public long PlantId { get; set; }
+    public string UserId { get; set; } = string.Empty;
+    public long PlantId { get; set; } = PotSettings.InvalidPotId;
     
     public string Name { get; set; } = string.Empty;
     public string Location { get; set; } = string.Empty;
@@ -36,20 +35,25 @@ public class Pot : AuditEntity
     //  @Methods
     public void AssignUser(PotAssignmentCommand command)
     {
-        this.IsUserAssigned = true;
-        this.Uid = command.Uid;
+        this.UserId = command.Uid;
         this.Name = command.Name;
         this.Location = command.Location;
         this.AssignedAt = DateTimeOffset.UtcNow;
     }
+    public void UnassignUser()
+    {
+        this.UserId = string.Empty;
+        this.Name = string.Empty;
+        this.Location = string.Empty;
+        this.AssignedAt = DateTimeOffset.UtcNow;
+    }
     public void AssignPlant(long plantId)
     {
-        this.IsPlantLinked = true;
         this.PlantId = plantId;
     }
     public void UnassignPlant()
     {
-        this.IsPlantLinked = false;
+        this.PlantId = PotSettings.InvalidPotId;
     }
     public void UpdateStatus(PotStatus status)
     {

@@ -93,4 +93,40 @@ public class PotCommandService(
             return null;
         }
     }
+    public async Task<Pot?> Handle(LinkPlantCommand command)
+    {
+        var pot = await repository.FindPotByIdAsync(command.PotId);
+        if (pot == null) return null;
+        if (pot.UserId != command.Uid) return null;
+
+        try
+        {
+            pot.AssignPlant(command.PlantId);
+            repository.Update(pot);
+            await unitOfWork.CompleteAsync();
+            return pot;
+        }
+        catch (Exception ex)
+        {
+            return null;
+        }
+    }
+    public async Task<Pot?> Handle(UnlinkPlantCommand command)
+    {
+        var pot = await repository.FindPotByIdAsync(command.PotId);
+        if (pot == null) return null;
+        if (pot.UserId != command.Uid) return null;
+
+        try
+        {
+            pot.UnassignPlant();
+            repository.Update(pot);
+            await unitOfWork.CompleteAsync();
+            return pot;
+        }
+        catch (Exception ex)
+        {
+            return null;
+        }
+    }
 }

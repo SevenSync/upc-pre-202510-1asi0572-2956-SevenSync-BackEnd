@@ -1,3 +1,3 @@
 namespace MaceTech.API.ARM.Interfaces.REST.Responses;
 
-public record LinkPlantResponse(bool Success);
+public record UnlinkPlantResponse(bool Success);

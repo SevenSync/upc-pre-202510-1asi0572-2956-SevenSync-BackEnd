@@ -10,4 +10,6 @@ public interface IPotCommandService
     public Task<Pot?> Handle(UpdatePotMetricsCommand command);
     public Task<Pot?> Handle(DeletePotCommand command);
     public Task<Pot?> Handle(UnassignPotFromUserCommand command);
+    public Task<Pot?> Handle(LinkPlantCommand command);
+    public Task<Pot?> Handle(UnlinkPlantCommand command);
 }

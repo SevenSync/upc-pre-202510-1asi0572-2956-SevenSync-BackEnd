@@ -123,29 +123,32 @@ public class PotsController(
     
     [Authorize]
     [HttpPut("{potId:long}/plant")]
-    public async Task<IActionResult> LinkPlant([FromQuery] long potId)
+    public async Task<IActionResult> LinkPlant( long potId, [FromBody] LinkPlantToPotResource resource)
     {
-        //  var uid = iamContextFacade.GetUserUidFromContext(this.HttpContext);
-        //  var command = LinkPlantToPotCommandFromResourceAssembler.ToCommandFromResource(potId, uid);
-        
-        //  var uid = iamContextFacade.GetUserUidFromContext(this.HttpContext);
-        //  var command = UnassignPotFromUserCommandFromResourceAssembler.ToCommandFromResource(potId, uid);
-        //  var result = await potCommandService.Handle(command);
-        //  if (result == null)
-        //  {
-        //      return BadRequest(new PotUnassignedResponse(Success: false));
-        //  }
-        //  
-        //  return Ok(new PotUnassignedResponse(Success: true));
+        var uid = iamContextFacade.GetUserUidFromContext(this.HttpContext);
+        var command = LinkPlantToPotCommandFromResourceAssembler.ToCommandFromResource(potId, uid, resource);
+        var result = await potCommandService.Handle(command);
+        if (result == null)
+        {
+            return BadRequest(new LinkPlantResponse(Success: false));
+        }
 
-        return Ok();
+        return Ok(new LinkPlantResponse(Success: true));
     }
     
     [Authorize]
     [HttpDelete("{potId:long}/plant")]
     public async Task<IActionResult> UnlinkPlant(long potId)
     {
-        // to be implemented
-        return Ok();
+        var uid = iamContextFacade.GetUserUidFromContext(this.HttpContext);
+        var command = UnlinkPlantFromPotCommandResourceAssembler.ToCommandFromResource(potId, uid);
+        var result = await potCommandService.Handle(command);
+        
+        if (result == null)
+        {
+            return BadRequest(new UnlinkPlantResponse(Success: false));
+        }
+        
+        return Ok(new UnlinkPlantResponse(Success: true));
     }
 }

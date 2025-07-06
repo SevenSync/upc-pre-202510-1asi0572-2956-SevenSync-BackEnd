@@ -15,7 +15,7 @@ public class PotRepository(AppDbContext context) : BaseRepository<Pot>(context),
     public async Task<List<Pot>> FindPotsByUserIdAsync(string uid)
     {
         return await Context.Set<Pot>()
-            .Where(pot => pot.Uid == uid)
+            .Where(pot => pot.UserId == uid)
             .ToListAsync();
     }
 }

@@ -75,7 +75,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         //  |: Pot Context
         builder.Entity<Pot>().HasKey(s => s.Id);
         builder.Entity<Pot>().Property(s => s.Id).IsRequired().ValueGeneratedOnAdd();
-        builder.Entity<Pot>().Property(s => s.Uid).IsRequired();
+        builder.Entity<Pot>().Property(s => s.UserId).IsRequired();
         builder.Entity<Pot>().Property(s => s.IsUserAssigned).IsRequired();
         builder.Entity<Pot>().Property(s => s.PlantId).IsRequired();
         builder.Entity<Pot>().Property(s => s.IsPlantLinked).IsRequired();
