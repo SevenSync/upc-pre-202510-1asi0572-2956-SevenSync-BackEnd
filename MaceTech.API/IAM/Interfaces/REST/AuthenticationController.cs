@@ -19,7 +19,7 @@ namespace MaceTech.API.IAM.Interfaces.REST;
 
 [Authorize]
 [ApiController]
-[Route("api/users/")]
+[Route("api/v1/[controller]/")]
 [Produces(MediaTypeNames.Application.Json)]
 public class AuthenticationController(
     IUserCommandService userCommandService,
@@ -57,11 +57,6 @@ public class AuthenticationController(
     [AllowAnonymous]
     public async Task<IActionResult> SingUp([FromBody] SignUpResource resource)
     {
-        if (string.IsNullOrWhiteSpace(resource.Password) || resource.Password.Length < 6)
-        {
-            return BadRequest("Password must be at least 6 characters long.");
-        }
-
         var args = new UserRecordArgs
         {
             Email = resource.Email,

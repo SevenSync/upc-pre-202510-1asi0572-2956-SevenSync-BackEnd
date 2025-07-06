@@ -9,7 +9,7 @@ namespace MaceTech.API.IAM.Interfaces.REST;
 
 [Authorize]
 [ApiController]
-[Route("api/users/")]
+[Route("api/v1/[controller]/")]
 [Produces(MediaTypeNames.Application.Json)]
 public class UserController(IUserQueryService userQueryService) : ControllerBase
 {

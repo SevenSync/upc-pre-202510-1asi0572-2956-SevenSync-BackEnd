@@ -15,7 +15,7 @@ using Stripe.Checkout;
 namespace MaceTech.API.SubscriptionsAndPayments.Interfaces.REST.Subscription;
 
 [ApiController]
-[Route("api/v1/subscriptions/")]
+[Route("api/v1/[controller]/")]
 [Produces(MediaTypeNames.Application.Json)]
 public class SubscriptionsController(
     ISubscriptionPlansQueryService plansQueryService,

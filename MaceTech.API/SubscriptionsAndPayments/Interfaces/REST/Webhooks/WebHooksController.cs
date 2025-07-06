@@ -10,7 +10,7 @@ using Stripe;
 namespace MaceTech.API.SubscriptionsAndPayments.Interfaces.REST.Webhooks;
 
 [ApiController]
-[Route("api/webhook/")]
+[Route("api/v1/[controller]/")]
 [Produces(MediaTypeNames.Application.Json)]
 public class WebHooksController(
     ISubscriptionCommandService subscriptionCommandService,

@@ -12,9 +12,9 @@ using Microsoft.AspNetCore.Mvc;
 namespace MaceTech.API.ARM.Interfaces.REST;
 
 [ApiController]
-[Route("api/pots/")]
+[Route("api/v1/[controller]/")]
 [Produces(MediaTypeNames.Application.Json)]
-public class PotController(
+public class PotsController(
     IPotQueryService potQueryService,
     IPotCommandService potCommandService,
     IIamContextFacade iamContextFacade
