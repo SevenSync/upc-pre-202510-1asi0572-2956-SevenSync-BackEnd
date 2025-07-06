@@ -1,6 +1,6 @@
 using EntityFrameworkCore.CreatedUpdatedDate.Extensions;
 using MaceTech.API.Analytics.Domain.Model.Aggregates;
-using MaceTech.API.AssetAndResourceManagement.Domain.Model.Aggregates;
+using MaceTech.API.ARM.Domain.Model.Aggregates;
 using MaceTech.API.IAM.Domain.Model.Aggregates;
 using MaceTech.API.Planning.Domain.Model.Aggregates;
 using MaceTech.API.Profiles.Domain.Model.Aggregates;
