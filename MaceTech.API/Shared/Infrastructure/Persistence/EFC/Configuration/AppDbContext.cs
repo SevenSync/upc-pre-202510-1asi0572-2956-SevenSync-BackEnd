@@ -5,7 +5,7 @@ using MaceTech.API.IAM.Domain.Model.Aggregates;
 using MaceTech.API.Planning.Domain.Model.Aggregates;
 using MaceTech.API.Profiles.Domain.Model.Aggregates;
 using MaceTech.API.Shared.Infrastructure.Persistence.EFC.Configuration.Extensions;
-using MaceTech.API.SubscriptionsAndPayments.Domain.Model.Aggregates;
+using MaceTech.API.SP.Domain.Model.Aggregates;
 using Microsoft.EntityFrameworkCore;
 
 namespace MaceTech.API.Shared.Infrastructure.Persistence.EFC.Configuration;
@@ -76,9 +76,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         builder.Entity<Pot>().HasKey(s => s.Id);
         builder.Entity<Pot>().Property(s => s.Id).IsRequired().ValueGeneratedOnAdd();
         builder.Entity<Pot>().Property(s => s.UserId).IsRequired();
-        builder.Entity<Pot>().Property(s => s.IsUserAssigned).IsRequired();
         builder.Entity<Pot>().Property(s => s.PlantId).IsRequired();
-        builder.Entity<Pot>().Property(s => s.IsPlantLinked).IsRequired();
         builder.Entity<Pot>().Property(s => s.Name).IsRequired();
         builder.Entity<Pot>().Property(s => s.Location).IsRequired();
         builder.Entity<Pot>().Property(s => s.BatteryLevel).IsRequired();
