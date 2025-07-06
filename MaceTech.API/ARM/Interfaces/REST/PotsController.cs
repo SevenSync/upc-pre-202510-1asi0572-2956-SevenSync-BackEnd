@@ -34,7 +34,7 @@ public class PotsController(
     
     [Authorize]
     [HttpGet("{potId:long}")]
-    public async Task<IActionResult> GetPot([FromQuery] long potId)
+    public async Task<IActionResult> GetPot(long potId)
     {
         iamContextFacade.GetUserUidFromContext(this.HttpContext);
         var query = GetPotQueryFromResponseAssembler.ToQueryFromResource(potId);
@@ -58,7 +58,7 @@ public class PotsController(
     }
     
     [HttpDelete("{potId:long}")]
-    public async Task<IActionResult> DeletePot([FromQuery] long potId)
+    public async Task<IActionResult> DeletePot(long potId)
     {
         var command = DeletePotCommandFromResourceAssembler.ToCommandFromResource(potId);
         var result = await potCommandService.Handle(command);
@@ -73,7 +73,7 @@ public class PotsController(
     [Authorize]
     [HttpPut("{potId:long}/assignee")]
     public async Task<IActionResult> AssignPot(
-        [FromQuery] long potId,
+        long potId,
         [FromBody] AssignPotToUserResource resource
         )
     {
@@ -90,7 +90,7 @@ public class PotsController(
     
     [Authorize]
     [HttpDelete("{potId:long}/assignee")]
-    public async Task<IActionResult> UnassignPot([FromQuery] long potId)
+    public async Task<IActionResult> UnassignPot(long potId)
     {
         var uid = iamContextFacade.GetUserUidFromContext(this.HttpContext);
         var command = UnassignPotFromUserCommandFromResourceAssembler.ToCommandFromResource(potId, uid);
@@ -105,7 +105,7 @@ public class PotsController(
     
     [HttpPatch("{potId:long}/metrics")]
     public async Task<IActionResult> UpdateMetrics(
-        [FromQuery] long potId,
+        long potId,
         [FromBody] UpdatePotMetricsResource resource
         )
     {

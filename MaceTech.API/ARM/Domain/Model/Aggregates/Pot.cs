@@ -1,21 +1,17 @@
 using System.Text.Json.Serialization;
 using MaceTech.API.ARM.Domain.Model.Commands;
 using MaceTech.API.ARM.Domain.Model.Enums;
+using MaceTech.API.Shared.Domain.Models.Abstractions;
 
 namespace MaceTech.API.ARM.Domain.Model.Aggregates;
 
-public class Pot
+public class Pot : AuditEntity
 {
     //  @Properties
-    [JsonIgnore]
     public long Id { get; set; }
-    [JsonIgnore]
     public bool IsUserAssigned { get; set; } = false;
-    [JsonIgnore]
     public string Uid { get; set; } = string.Empty;
-    [JsonIgnore]
     public bool IsPlantLinked { get; set; } = false;
-    [JsonIgnore]
     public long PlantId { get; set; }
     
     public string Name { get; set; } = string.Empty;
@@ -33,7 +29,7 @@ public class Pot
     public DateTimeOffset AssignedAt { get; set; } = DateTimeOffset.UtcNow;
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
     
-    //  @Constructor
+    //  @Constructors
     public Pot() { }
     public Pot(CreatePotCommand command) { }
     

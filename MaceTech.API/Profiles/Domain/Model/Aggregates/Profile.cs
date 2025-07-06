@@ -1,10 +1,11 @@
 using MaceTech.API.Profiles.Domain.Model.Commands;
 using MaceTech.API.Profiles.Domain.Model.Enums;
 using MaceTech.API.Profiles.Domain.Model.ValueObjects;
+using MaceTech.API.Shared.Domain.Models.Abstractions;
 
 namespace MaceTech.API.Profiles.Domain.Model.Aggregates;
 
-public partial class Profile
+public class Profile : AuditEntity
 {
     //  @Properties
     public long Id { get; }
