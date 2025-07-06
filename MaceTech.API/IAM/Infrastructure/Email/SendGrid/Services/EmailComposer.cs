@@ -63,7 +63,7 @@ public class EmailComposer : IEmailComposer
         return ret;
     }
 
-    public EmailComponent ComposePasswordRecoveryEmail(string destination, string recoveryLink)
+    public EmailComponent ComposePasswordResetEmail(string destination, string recoveryLink)
     {
       const string subject = "Recuperación de contraseña en MaceTech";
         var body = $"""

@@ -125,8 +125,8 @@ public class PotsController(
     [HttpPut("{potId:long}/plant")]
     public async Task<IActionResult> LinkPlant([FromQuery] long potId)
     {
-        var uid = iamContextFacade.GetUserUidFromContext(this.HttpContext);
-        var command = LinkPlantToPotCommandFromResourceAssembler.ToCommandFromResource(potId, uid);
+        //  var uid = iamContextFacade.GetUserUidFromContext(this.HttpContext);
+        //  var command = LinkPlantToPotCommandFromResourceAssembler.ToCommandFromResource(potId, uid);
         
         //  var uid = iamContextFacade.GetUserUidFromContext(this.HttpContext);
         //  var command = UnassignPotFromUserCommandFromResourceAssembler.ToCommandFromResource(potId, uid);
@@ -137,6 +137,8 @@ public class PotsController(
         //  }
         //  
         //  return Ok(new PotUnassignedResponse(Success: true));
+
+        return Ok();
     }
     
     [Authorize]

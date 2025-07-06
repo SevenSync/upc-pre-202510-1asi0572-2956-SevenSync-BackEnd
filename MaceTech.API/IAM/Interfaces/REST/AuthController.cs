@@ -19,9 +19,9 @@ namespace MaceTech.API.IAM.Interfaces.REST;
 
 [Authorize]
 [ApiController]
-[Route("api/v1/[controller]/")]
+[Route("api/v1/auth/")]
 [Produces(MediaTypeNames.Application.Json)]
-public class AuthenticationController(
+public class AuthController(
     IUserCommandService userCommandService,
     IUserQueryService userQueryService,
     FirebaseAuth auth,
@@ -30,9 +30,11 @@ public class AuthenticationController(
     IOptions<FirebaseConfiguration> firebaseConfiguration
     ) : ControllerBase
 {
+    //  |: Variables
     private readonly FirebaseConfiguration _firebaseConfiguration = firebaseConfiguration.Value;
     private readonly HttpClient _httpClient = new HttpClient();
     
+    //  |: Functions
     private async Task<FirebaseSignInResponse?> SignInViaFirebase(
         string email, string password, CancellationToken ct = default
     )
@@ -53,9 +55,9 @@ public class AuthenticationController(
         return await response.Content.ReadFromJsonAsync<FirebaseSignInResponse>(cancellationToken: ct);
     }
     
-    [HttpPost("sign-up")]
+    [HttpPost("register")]
     [AllowAnonymous]
-    public async Task<IActionResult> SingUp([FromBody] SignUpResource resource)
+    public async Task<IActionResult> Register([FromBody] SignUpResource resource)
     {
         var args = new UserRecordArgs
         {
@@ -84,9 +86,9 @@ public class AuthenticationController(
         }
     }
 
-    [HttpPost("sign-in")]
+    [HttpPost("login")]
     [AllowAnonymous]
-    public async Task<IActionResult> SignIn([FromBody] SignInResource resource)
+    public async Task<IActionResult> Login([FromBody] SignInResource resource)
     {
         var signIn = await this.SignInViaFirebase(resource.Email, resource.Password);
         if (signIn == null) return Unauthorized("Invalid credentials");
@@ -99,8 +101,8 @@ public class AuthenticationController(
     }
 
     [Authorize]
-    [HttpPost("sign-out")]
-    public async Task<IActionResult> SignOutUser()
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout()
     {
         if (
             !HttpContext.Items.TryGetValue("User", out var userDto) ||
@@ -114,9 +116,9 @@ public class AuthenticationController(
         return NoContent();
     }
     
-    [HttpPatch("password-recovery")]
+    [HttpPatch("password-reset/request")]
     [AllowAnonymous]
-    public async Task<IActionResult> PasswordRecovery([FromBody] PasswordRecoveryResource resource)
+    public async Task<IActionResult> RequestPasswordReset([FromBody] PasswordResetResource resource)
     {
         if (string.IsNullOrWhiteSpace(resource.Email))
         {
@@ -130,64 +132,8 @@ public class AuthenticationController(
         }
 
         var link = await auth.GeneratePasswordResetLinkAsync(resource.Email);
-        await emailSender.SendEmailAsync(emailComposer.ComposePasswordRecoveryEmail(resource.Email, link));
+        await emailSender.SendEmailAsync(emailComposer.ComposePasswordResetEmail(resource.Email, link));
 
         return Ok(new PasswordRecoveryResponse(Sent: true));
-    }
-    
-    [Authorize]
-    [HttpPost("change-password")]
-    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordResource resource)
-    {
-        if (string.IsNullOrWhiteSpace(resource.NewPassword) || resource.NewPassword.Length < 6)
-        {
-            return BadRequest("New password must be at least 6 characters long.");
-        }
-
-        if (
-            !HttpContext.Items.TryGetValue("User", out var userDto) ||
-            (userDto is not User user))
-        {
-            throw new InvalidTokenException();
-        }
-        
-        var args = new UserRecordArgs
-        {
-            Uid = user.Uid,
-            Password = resource.NewPassword
-        };
-
-        try
-        {
-            await auth.UpdateUserAsync(args);
-            return Ok(new ChangePasswordResponse(Success: true));
-        }
-        catch (FirebaseAuthException e) when (e.AuthErrorCode == AuthErrorCode.UserNotFound)
-        {
-            return NotFound("User not found.");
-        }
-    }
-
-    [Authorize]
-    [HttpDelete("delete-account")]
-    public async Task<IActionResult> DeleteAccount()
-    {
-        if (
-            !HttpContext.Items.TryGetValue("User", out var userDto) ||
-            (userDto is not User user))
-        {
-            throw new InvalidTokenException();
-        }
-
-        try
-        {
-            await auth.DeleteUserAsync(user.Uid);
-            await userCommandService.Handle(new DeleteUserCommand(user.Uid));
-            return Ok(new DeleteUserResponse(Deleted: true));
-        }
-        catch (FirebaseAuthException e) when (e.AuthErrorCode == AuthErrorCode.UserNotFound)
-        {
-            return NotFound("User not found.");
-        }
     }
 }   

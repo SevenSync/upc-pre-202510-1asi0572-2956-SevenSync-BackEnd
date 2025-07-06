@@ -1,8 +1,6 @@
 using System.Net.Mime;
 using MaceTech.API.IAM.Infrastructure.Pipeline.Middleware.Attributes;
 using MaceTech.API.IAM.Interfaces.ACL;
-using MaceTech.API.SubscriptionsAndPayments.Application.External.Sku.Requests;
-using MaceTech.API.SubscriptionsAndPayments.Application.External.Sku.Services;
 using MaceTech.API.SubscriptionsAndPayments.Domain.Model.Commands;
 using MaceTech.API.SubscriptionsAndPayments.Domain.Model.Queries;
 using MaceTech.API.SubscriptionsAndPayments.Domain.Services;
@@ -10,16 +8,13 @@ using MaceTech.API.SubscriptionsAndPayments.Interfaces.REST.Subscription.Resourc
 using MaceTech.API.SubscriptionsAndPayments.Interfaces.REST.Subscription.Responses;
 using Microsoft.AspNetCore.Mvc;
 using Stripe;
-using Stripe.Checkout;
 
 namespace MaceTech.API.SubscriptionsAndPayments.Interfaces.REST.Subscription;
 
 [ApiController]
-[Route("api/v1/[controller]/")]
+[Route("api/v1/[controller]/me")]
 [Produces(MediaTypeNames.Application.Json)]
 public class SubscriptionsController(
-    ISubscriptionPlansQueryService plansQueryService,
-    ISkuAndPriceIdConverter skuAndPriceIdConverter,
     ISubscriptionQueryService subscriptionQueryService,
     ISubscriptionCommandService subscriptionCommandService,
     IIamContextFacade iamContextFacade
@@ -30,34 +25,8 @@ public class SubscriptionsController(
     
     //  |: Functions
     [Authorize]
-    [HttpPost("checkout")]
-    public async Task<IActionResult> CreateSubscription([FromBody] CheckoutSubscriptionResource resource)
-    {
-        var priceId = skuAndPriceIdConverter.Convert(new ConvertSkuToPriceIdRequest(resource.Sku));
-        var sessionService = new Stripe.Checkout.SessionService();
-        var options = new Stripe.Checkout.SessionCreateOptions
-        {
-            Mode = "subscription",
-            CustomerEmail = resource.Email,
-            LineItems =
-            [
-                new SessionLineItemOptions
-                {
-                    Price = priceId,
-                    Quantity = 1
-                }
-            ],
-            SuccessUrl = "https://google.com",
-            CancelUrl = "https://microsoft.com"
-        };
-
-        var session = await sessionService.CreateAsync(options);
-        return Ok(new { checkoutUrl = session.Url });
-    }
-    
-    [Authorize]
-    [HttpGet("status")]
-    public async Task<IActionResult> GetSubscriptionStatus()
+    [HttpGet]
+    public async Task<IActionResult> GetMySubscription()
     {
         var uid = iamContextFacade.GetUserUidFromContext(this.HttpContext);
         
@@ -73,8 +42,8 @@ public class SubscriptionsController(
     }
     
     [Authorize]
-    [HttpPost("cancel")]
-    public async Task<IActionResult> CancelSubscription([FromBody] CancelSubscriptionResource resource)
+    [HttpDelete]
+    public async Task<IActionResult> CancelMySubscription([FromBody] CancelSubscriptionResource resource)
     {
         var localSub = await subscriptionQueryService.Handle(new GetSubscriptionStatusQuery(resource.Uid));
         if (localSub is null)

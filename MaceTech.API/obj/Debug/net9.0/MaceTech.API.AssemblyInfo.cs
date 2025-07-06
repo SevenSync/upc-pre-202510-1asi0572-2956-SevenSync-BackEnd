@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MaceTech.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2ade4dd300fa007398c9c7b6190d7298f21dd372")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+795a1020913a629872d4b60e4502da3fc587951a")]
 [assembly: System.Reflection.AssemblyProductAttribute("MaceTech.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MaceTech.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

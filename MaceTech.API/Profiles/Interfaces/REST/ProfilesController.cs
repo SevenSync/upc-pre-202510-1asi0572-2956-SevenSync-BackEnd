@@ -20,8 +20,8 @@ public class ProfilesController(
     ) : ControllerBase
 {
     [Authorize]
-    [HttpPost("create")]
-    public async Task<IActionResult> CreateProfile(CreateProfileResource resource)
+    [HttpPost]
+    public async Task<IActionResult> Create(CreateProfileResource resource)
     {
         var uid = iamContextFacade.GetUserUidFromContext(this.HttpContext);
         if (string.IsNullOrWhiteSpace(uid))
@@ -36,8 +36,8 @@ public class ProfilesController(
     }
     
     [Authorize]
-    [HttpGet("get")]
-    public async Task<IActionResult> GetProfileByUid()
+    [HttpGet("me")]
+    public async Task<IActionResult> GetMe()
     {
         var uid = iamContextFacade.GetUserUidFromContext(this.HttpContext);
         if (string.IsNullOrWhiteSpace(uid))
@@ -54,8 +54,8 @@ public class ProfilesController(
     }
     
     [Authorize]
-    [HttpGet("has-profile")]
-    public async Task<IActionResult> HasProfile()
+    [HttpHead("me")]
+    public async Task<IActionResult> HeadMe()
     {
         var uid = iamContextFacade.GetUserUidFromContext(this.HttpContext);
         if (string.IsNullOrWhiteSpace(uid))
@@ -69,8 +69,8 @@ public class ProfilesController(
     }
     
     [Authorize]
-    [HttpPut("update")]
-    public async Task<IActionResult> UpdateProfile(UpdateProfileResource resource)
+    [HttpPut("me")]
+    public async Task<IActionResult> UpdateMe(UpdateProfileResource resource)
     {
         var uid = iamContextFacade.GetUserUidFromContext(this.HttpContext);
         if (string.IsNullOrWhiteSpace(uid))

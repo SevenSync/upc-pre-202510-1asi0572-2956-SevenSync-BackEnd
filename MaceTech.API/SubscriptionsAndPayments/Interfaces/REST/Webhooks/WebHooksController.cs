@@ -61,6 +61,10 @@ public class WebHooksController(
                 Console.WriteLine("Warning, your subscription payment has failed.");
                 
                 //  We should notify the user about the failed payment. And as "we", I mean "me".
+                //  Should I remove these comments?
+                //  This code is for development purposes only since the real thing
+                //  costs money~
+                //  Unlike other controllers which are final and can be developed by anyone within the team.
                 
                 break;
             }
