@@ -16,7 +16,7 @@ public class AlertCommandService(
     {
         var recommendation = recommendationService.GenerateFromAlert(command.AlertType, command.Value);
         
-        var alert = new Alert(command.DeviceId, command.AlertType, command.Value, recommendation);
+        var alert = new Alert(command.DeviceId, command.AlertType, command.Value, recommendation.Text, recommendation.Urgency, recommendation.GuideUrl);
 
         await alertRepository.AddAsync(alert);
         

@@ -38,27 +38,4 @@ public class DevicePlantsController(
         var resource = DevicePlantResourceFromEntityAssembler.ToResourceFromEntity(result);
         return Ok(resource);
     }
-    
-    [HttpPut("thresholds")]
-    public async Task<IActionResult> UpdateDevicePlantThresholds(string deviceId, [FromBody] UpdateDevicePlantThresholdsResource resource)
-    {
-        var existingSettings = await devicePlantQueryService.Handle(new GetPlantSettingsByDeviceIdQuery(deviceId));
-        if (existingSettings == null)
-        {
-            return NotFound(new { message = "No plant settings found for this device to update." });
-        }
-        
-        var command = UpdateDevicePlantThresholdsCommandFromResourceAssembler.ToCommandFromResource(resource, existingSettings);
-        
-        try
-        {
-            var result = await devicePlantCommandService.Handle(command);
-            var resultResource = DevicePlantResourceFromEntityAssembler.ToResourceFromEntity(result!);
-            return Ok(resultResource);
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
-    }
 }

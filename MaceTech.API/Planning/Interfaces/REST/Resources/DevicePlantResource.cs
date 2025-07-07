@@ -5,6 +5,5 @@ public record DevicePlantResource(
     int Id, 
     string DeviceId, 
     int PlantId, 
-    string PlantCommonName,
-    ThresholdsResource CustomThresholds
+    string PlantCommonName
 );

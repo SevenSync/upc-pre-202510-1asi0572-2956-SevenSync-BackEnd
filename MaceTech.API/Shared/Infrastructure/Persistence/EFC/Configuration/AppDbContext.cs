@@ -3,10 +3,13 @@ using MaceTech.API.Analytics.Domain.Model.Aggregates;
 using MaceTech.API.ARM.Domain.Model.Aggregates;
 using MaceTech.API.IAM.Domain.Model.Aggregates;
 using MaceTech.API.Planning.Domain.Model.Aggregates;
+using MaceTech.API.Planning.Domain.Model.ValueObjects;
 using MaceTech.API.Profiles.Domain.Model.Aggregates;
+using MaceTech.API.Profiles.Domain.Model.ValueObjects;
 using MaceTech.API.Shared.Infrastructure.Persistence.EFC.Configuration.Extensions;
 using MaceTech.API.SP.Domain.Model.Aggregates;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace MaceTech.API.Shared.Infrastructure.Persistence.EFC.Configuration;
 
@@ -18,6 +21,9 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
     public DbSet<Alert> Alerts { get; set; }
     public DbSet<Plant> Plants { get; set; }
     public DbSet<DevicePlant> DevicePlants { get; set; }
+    public DbSet<Subscription> Subscriptions { get; set; }
+    public DbSet<Pot> Pots { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder builder)
     {
         base.OnConfiguring(builder);
@@ -25,54 +31,59 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
     }
 
     protected override void OnModelCreating(ModelBuilder builder)
-    { 
+    {
         base.OnModelCreating(builder);
-        
-        //  |: IAM Context
+
+
+        //                                                                                                                         | : IAM Context                    
         builder.Entity<User>().HasKey(u => u.Uid);
         builder.Entity<User>().Property(u => u.Uid).IsRequired();
         builder.Entity<User>().Property(u => u.Email).IsRequired();
         builder.Entity<User>().Property(u => u.TokenVersion).IsRequired();
         builder.Entity<User>().Property(u => u.Status).IsRequired();
-        
-        //  |: Profiles Context
+
+        //                                                                                                                         | : Profiles Context               
         builder.Entity<Profile>().HasKey(p => p.Id);
         builder.Entity<Profile>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
         builder.Entity<Profile>().Property(p => p.Uid).IsRequired();
-        builder.Entity<Profile>().OwnsOne(p => p.Name, n =>
+        builder.Entity<Profile>().OwnsOne<PersonName>(p => p.Name, n =>
         {
-            n.WithOwner().HasForeignKey("Id");
-            n.Property(p => p.FirstName).HasColumnName("FirstName");
-            n.Property(p => p.LastName).HasColumnName("LastName");
+            n.WithOwner()
+              .HasForeignKey("Id");   // apunta a Profiles.id
+            n.HasKey("Id");
+            n.Property(p => p.FirstName);
+            n.Property(p => p.LastName);
         });
-        builder.Entity<Profile>().OwnsOne(p => p.Address,
-            a =>
-            {
-                a.WithOwner().HasForeignKey("Id");
-                a.Property(s => s.Street).HasColumnName("AddressStreet");
-                a.Property(s => s.Number).HasColumnName("AddressNumber");
-                a.Property(s => s.City).HasColumnName("AddressCity");
-                a.Property(s => s.PostalCode).HasColumnName("AddressPostalCode");
-                a.Property(s => s.Country).HasColumnName("AddressCountry");
-            });
-        builder.Entity<Profile>().OwnsOne(p => p.PhoneNumber,
-            a =>
-            {
-                a.WithOwner().HasForeignKey("Id");
-                a.Property(s => s.CountryCode).HasColumnName("PhoneNumberCountryCode");
-                a.Property(s => s.Number).HasColumnName("PhoneNumber");
-            });
+        builder.Entity<Profile>().OwnsOne<PersonAddress>(p => p.Address,
+        a =>
+        {
+            // Reutiliza Profile.Id
+            a.WithOwner()
+              .HasForeignKey("Id");   // apunta a Profiles.id
+            a.HasKey("Id");           // esa misma columna es PK de PersonAddress
+            a.Property(s => s.Street);
+            a.Property(s => s.Number);
+            a.Property(s => s.City);
+            a.Property(s => s.PostalCode);
+            a.Property(s => s.Country);
+        });
+        builder.Entity<Profile>().OwnsOne<PhoneNumber>(p => p.PhoneNumber,
+        a =>
+        {
+            a.WithOwner()
+                                  .HasForeignKey("Id");   // apunta a Profiles.id
+            a.HasKey("Id");           // esa misma columna es PK de PersonAddress
+            a.Property(s => s.CountryCode);
+            a.Property(s => s.Number);
+        });
 
-        builder.UseSnakeCaseWithPluralizedTableNamingConvention();
-        
-        //  |: Subscriptions Context
+        //                                                                                                                         | : Subscriptions Context          
         builder.Entity<Subscription>().HasKey(s => s.Id);
         builder.Entity<Subscription>().Property(s => s.Id).IsRequired().ValueGeneratedOnAdd();
         builder.Entity<Subscription>().Property(s => s.Uid).IsRequired();
-        builder.Entity<Subscription>().Property(s => s.CreatedAt).IsRequired();
         builder.Entity<Subscription>().Property(s => s.Plan).IsRequired();
-        
-        //  |: Pot Context
+
+        //                                                                                                                         | : Pot Context                    
         builder.Entity<Pot>().HasKey(s => s.Id);
         builder.Entity<Pot>().Property(s => s.Id).IsRequired().ValueGeneratedOnAdd();
         builder.Entity<Pot>().Property(s => s.UserId).IsRequired();
@@ -88,20 +99,8 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         builder.Entity<Pot>().Property(s => s.Salinity).IsRequired();
         builder.Entity<Pot>().Property(s => s.Status).IsRequired();
         builder.Entity<Pot>().Property(s => s.AssignedAt).IsRequired();
-        builder.Entity<Pot>().Property(s => s.CreatedAt).IsRequired();
 
-        
-        //  |: Analytics Context
-        builder.Entity<PotRecord>().ToTable("PotRecords");
-        builder.Entity<PotRecord>().HasKey(p => p.Id);
-        builder.Entity<PotRecord>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
-        builder.Entity<PotRecord>().Property(p => p.DeviceId).IsRequired();
-        builder.Entity<PotRecord>().Property(p => p.Temperature).IsRequired();
-        builder.Entity<PotRecord>().Property(p => p.Humidity).IsRequired();
-        builder.Entity<PotRecord>().Property(p => p.Light).IsRequired();
-        builder.Entity<PotRecord>().Property(p => p.Salinity).IsRequired();
-        builder.Entity<PotRecord>().Property(p => p.Ph).IsRequired();
-        builder.Entity<PotRecord>().Property(p => p.CreatedAt).IsRequired();
+        //                                                                                                                         | : Analytics Context              
         builder.Entity<Alert>().ToTable("Alerts");
         builder.Entity<Alert>().HasKey(a => a.Id);
         builder.Entity<Alert>().Property(a => a.Id).IsRequired().ValueGeneratedOnAdd();
@@ -109,14 +108,38 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         builder.Entity<Alert>().Property(a => a.AlertType).IsRequired();
         builder.Entity<Alert>().Property(a => a.TriggerValue).IsRequired();
         builder.Entity<Alert>().Property(a => a.Timestamp).IsRequired();
-        builder.Entity<Alert>().OwnsOne(a => a.GeneratedRecommendation, r =>
+
+        // Configuración de la relación con Recommendation                                                                                                            
+        builder.Entity<Alert>()
+        .OwnsOne(a => a.GeneratedRecommendation, r =>
         {
-            r.Property(p => p.Text).HasColumnName("RecommendationText");
-            r.Property(p => p.Urgency).HasColumnName("Urgency");
-            r.Property(p => p.GuideUrl).HasColumnName("GuideUrl");
+            r.WithOwner()
+    .HasForeignKey("Id");
+
+            r.HasKey("Id");
+
+            r.Property(re => re.Text)
+    .IsRequired()
+    .HasMaxLength(500);
+            r.Property(re => re.Urgency)
+    .IsRequired()
+    .HasMaxLength(50);
+            r.Property(re => re.GuideUrl)
+    .HasMaxLength(255);
         });
-        
-        //  |: Planning Context
+
+        builder.Entity<PotRecord>().ToTable("PotRecords");
+        builder.Entity<PotRecord>().HasKey(pr => pr.Id);
+        builder.Entity<PotRecord>().Property(pr => pr.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<PotRecord>().Property(pr => pr.DeviceId).IsRequired().HasMaxLength(50);
+        builder.Entity<PotRecord>().Property(pr => pr.Temperature).IsRequired();
+        builder.Entity<PotRecord>().Property(pr => pr.Humidity).IsRequired();
+        builder.Entity<PotRecord>().Property(pr => pr.Light).IsRequired();
+        builder.Entity<PotRecord>().Property(pr => pr.Salinity).IsRequired();
+        builder.Entity<PotRecord>().Property(pr => pr.Ph).IsRequired();
+        builder.Entity<PotRecord>().Property(pr => pr.CreatedAt).IsRequired();
+
+        //                                                                                                                         | : Planning Context               
         builder.Entity<Plant>().ToTable("Plants");
         builder.Entity<Plant>().HasKey(p => p.Id);
         builder.Entity<Plant>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
@@ -124,72 +147,158 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         builder.Entity<Plant>().Property(p => p.ScientificName).HasMaxLength(150);
         builder.Entity<Plant>().Property(p => p.ImageUrl).HasMaxLength(255);
         builder.Entity<Plant>().Property(p => p.Description).HasMaxLength(1000);
-        
-        builder.Entity<Plant>().OwnsOne(p => p.OptimalParameters, parameters =>
-        {
-            parameters.OwnsOne(po => po.TemperaturaAmbiente, temp =>
-            {
-                temp.Property(t => t.Min).HasColumnName("OptimalTempMin");
-                temp.Property(t => t.Max).HasColumnName("OptimalTempMax");
-            });
-            parameters.OwnsOne(po => po.Humedad, hum =>
-            {
-                hum.Property(h => h.Min).HasColumnName("OptimalHumidityMin");
-                hum.Property(h => h.Max).HasColumnName("OptimalHumidityMax");
-            });
-            parameters.OwnsOne(po => po.Luminosidad, lum =>
-            {
-                lum.Property(l => l.Min).HasColumnName("OptimalLuminosityMin");
-                lum.Property(l => l.Max).HasColumnName("OptimalLuminosityMax");
-            });
-            parameters.OwnsOne(po => po.SalinidadSuelo, sal =>
-            {
-                sal.Property(s => s.Min).HasColumnName("OptimalSalinityMin");
-                sal.Property(s => s.Max).HasColumnName("OptimalSalinityMax");
-            });
-            parameters.OwnsOne(po => po.PhSuelo, ph =>
-            {
-                ph.Property(p => p.Min).HasColumnName("OptimalPhMin");
-                ph.Property(p => p.Max).HasColumnName("OptimalPhMax");
-            });
+
+        // Defining the ValueComparer once to reuse it, as suggested by best practices.                                                                               
+        var stringListComparer = new ValueComparer<List<string>>(
+        (c1, c2) => c1.SequenceEqual(c2),
+        c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+        c => c.ToList());
+
+        // Mapping of the owned type OptimalParameters                                                                                                                
+        builder.Entity<Plant>().OwnsOne<OptimalParameters>(p => p.OptimalParameters,
+        parameters =>
+        {// Compartir PK 'Id'
+            parameters.WithOwner()
+              .HasForeignKey("Id");
+            parameters.HasKey("Id");
+
+            // Nested Ranges: Temperature, Humidity, Light, Salinity, Ph
+            parameters.OwnsOne<Range<double>>(po => po.Temperature,
+   temp =>
+   {
+       temp.WithOwner().HasForeignKey("Id");
+       temp.HasKey("Id");
+       temp.Property(t => t.Min);
+       temp.Property(t => t.Max);
+   });
+            parameters.OwnsOne<Range<double>>(po => po.Humidity,
+    hum =>
+    {
+        hum.WithOwner().HasForeignKey("Id");
+        hum.HasKey("Id");
+        hum.Property(h => h.Min);
+        hum.Property(h => h.Max);
+    });
+            parameters.OwnsOne<Range<double>>(po => po.Light,
+    lum =>
+    {
+        lum.WithOwner().HasForeignKey("Id");
+        lum.HasKey("Id");
+        lum.Property(l => l.Min);
+        lum.Property(l => l.Max);
+    });
+            parameters.OwnsOne<Range<double>>(po => po.Salinity,
+    sal =>
+    {
+        sal.WithOwner().HasForeignKey("Id");
+        sal.HasKey("Id");
+        sal.Property(s => s.Min);
+        sal.Property(s => s.Max);
+    });
+            parameters.OwnsOne<Range<double>>(po => po.Ph,
+    ph =>
+    {
+        ph.WithOwner().HasForeignKey("Id");
+        ph.HasKey("Id");
+        ph.Property(p => p.Min);
+        ph.Property(p => p.Max);
+    });
         });
+
+        // Mapping of the owned type SearchFilters                                                                                                                    
+        builder.Entity<Plant>().OwnsOne<SearchFilters>(p => p.SearchFilters, sf =>
+        {
+            sf.WithOwner().HasForeignKey("Id");
+            sf.HasKey("Id");
+            sf.Property(s => s.Difficulty);
+            sf.Property(s => s.Light);
+            sf.Property(s => s.SizePotential);
+            sf.Property(s => s.Ubication)
+    .HasConversion(
+    v => string.Join(",", v),                                          // first argument: convert from List<string> to string                                     
+    v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList(), // second argument: convert from string to List<string>                                    
+    stringListComparer                                                  // third argument: ValueComparer for List<string>                                         
+    );
+
+            sf.Property(s => s.Tags)
+    .HasConversion(
+    v => string.Join(",", v),
+    v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList(),
+    stringListComparer
+    );
+        });
+
+        // Mapping of the owned type VisualIdentification                                                                                                             
+        builder.Entity<Plant>().OwnsOne<VisualIdentification>(p => p.VisualIdentification, vi =>
+        {
+            // 1) Que el VisualIdentification comparta la PK 'id'                                                                                                         
+            vi.WithOwner()
+    .HasForeignKey("Id"); // apunta a Plants.id            
+            vi.HasKey("Id"); // esa misma columna es su PK    
+
+            vi.Property(v => v.GrowthHabit);
+
+            vi.OwnsOne<Leaf>(v => v.Leaf, leaf =>
+    {
+        // aquí de nuevo: que el Leaf comparta el mismo 'id'                                                                                                          
+        leaf.WithOwner()
+.HasForeignKey("Id");
+        leaf.HasKey("Id");
+        leaf.Property(l => l.Shape);
+        leaf.Property(l => l.RelativeSize);
+        leaf.Property(l => l.Edge);
+        leaf.Property(l => l.Pattern);
+        leaf.Property(l => l.MainColors);
+        leaf.Property(l => l.Texture)
+.HasConversion(
+v => string.Join(",", v),
+v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList(),
+stringListComparer
+);
+
+        leaf.Property(l => l.SecondaryColor)
+.HasConversion(
+v => string.Join(",", v),
+v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList(),
+stringListComparer
+);
+    });
+
+            vi.OwnsOne<Flower>(v => v.Flower, flower =>
+    {
+        flower.WithOwner()
+.HasForeignKey("Id");
+        flower.HasKey("Id");
+        flower.Property(f => f.Present);
+        flower.Property(f => f.Shape);
+        flower.Property(f => f.Fragance);
+        flower.Property(f => f.Color)
+.HasConversion(
+v => string.Join(",", v),
+v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList(),
+stringListComparer
+)
+                                                                                                                           ;
+    });
+
+            vi.OwnsOne<Fruit>(v => v.Fruit, fruit =>
+    {
+        fruit.WithOwner()
+.HasForeignKey("Id");
+        fruit.HasKey("Id");
+        fruit.Property(f => f.Present);
+    });
+        });
+
         builder.Entity<DevicePlant>().ToTable("DevicePlants");
         builder.Entity<DevicePlant>().HasKey(dp => dp.Id);
         builder.Entity<DevicePlant>().Property(dp => dp.Id).IsRequired().ValueGeneratedOnAdd();
         builder.Entity<DevicePlant>().Property(dp => dp.DeviceId).IsRequired().HasMaxLength(50);
         builder.Entity<DevicePlant>()
-            .HasOne(dp => dp.Plant)
-            .WithMany()
-            .HasForeignKey(dp => dp.PlantId)
-            .IsRequired();
-        builder.Entity<DevicePlant>().OwnsOne(dp => dp.CustomThresholds, thresholds =>
-        {
-            thresholds.OwnsOne(t => t.TemperaturaAmbiente, temp =>
-            {
-                temp.Property(p => p.Min).HasColumnName("CustomTempMin");
-                temp.Property(p => p.Max).HasColumnName("CustomTempMax");
-            });
-             thresholds.OwnsOne(t => t.Humedad, hum =>
-            {
-                hum.Property(p => p.Min).HasColumnName("CustomHumidityMin");
-                hum.Property(p => p.Max).HasColumnName("CustomHumidityMax");
-            });
-            thresholds.OwnsOne(t => t.Luminosidad, lum =>
-            {
-                lum.Property(p => p.Min).HasColumnName("CustomLuminosityMin");
-                lum.Property(p => p.Max).HasColumnName("CustomLuminosityMax");
-            });
-            thresholds.OwnsOne(t => t.SalinidadSuelo, sal =>
-            {
-                sal.Property(p => p.Min).HasColumnName("CustomSalinityMin");
-                sal.Property(p => p.Max).HasColumnName("CustomSalinityMax");
-            });
-            thresholds.OwnsOne(t => t.PhSuelo, ph =>
-            {
-                ph.Property(p => p.Min).HasColumnName("CustomPhMin");
-                ph.Property(p => p.Max).HasColumnName("CustomPhMax");
-            });
-        });
+        .HasOne(dp => dp.Plant)
+        .WithMany()
+        .HasForeignKey(dp => dp.PlantId)
+        .IsRequired();
 
         builder.UseSnakeCaseWithPluralizedTableNamingConvention();
     }

@@ -29,18 +29,39 @@ public class PlantDataSeeder
         }
 
         var plants = plantsDto.Select(dto => new Plant(
-            dto.NombreComun,
-            dto.NombreCientifico,
+            dto.CommonName,
+            dto.ScientificName,
             dto.ImageUrl,
-            dto.Descripcion,
-            new OptimalParameters(
-                new Range<double>(dto.ParametrosOptimos.TemperaturaAmbiente.Min, dto.ParametrosOptimos.TemperaturaAmbiente.Max),
-                new Range<int>(dto.ParametrosOptimos.Humedad.Min, dto.ParametrosOptimos.Humedad.Max),
-                new Range<int>(dto.ParametrosOptimos.Luminosidad.Min, dto.ParametrosOptimos.Luminosidad.Max),
-                new Range<double>(dto.ParametrosOptimos.SalinidadSuelo.Min, dto.ParametrosOptimos.SalinidadSuelo.Max),
-                new Range<double>(dto.ParametrosOptimos.PhSuelo.Min, dto.ParametrosOptimos.PhSuelo.Max)
-            )
-        )).ToList();
+            dto.Description,
+            dto.VisualIdentification.GrowthHabit,
+            dto.VisualIdentification.Leaf.Shape,
+            dto.VisualIdentification.Leaf.RelativeSize,
+            dto.VisualIdentification.Leaf.Texture,
+            dto.VisualIdentification.Leaf.Edge,
+            dto.VisualIdentification.Leaf.Pattern,
+            dto.VisualIdentification.Leaf.MainColors,
+            dto.VisualIdentification.Leaf.SecondaryColor,
+            dto.VisualIdentification.Flower.Present,
+            dto.VisualIdentification.Flower.Color,
+            dto.VisualIdentification.Flower.Shape,
+            dto.VisualIdentification.Flower.Fragance,
+            dto.VisualIdentification.Fruit.Present,
+            dto.SearchFilters.Difficulty,
+            dto.SearchFilters.Ubication,
+            dto.SearchFilters.Light,
+            dto.SearchFilters.SizePotential,
+            dto.SearchFilters.Tags,
+            dto.OptimalParameters.Temperature.Min,
+            dto.OptimalParameters.Temperature.Max,
+            dto.OptimalParameters.Humidity.Min,
+            dto.OptimalParameters.Humidity.Max,
+            dto.OptimalParameters.Light.Min,
+            dto.OptimalParameters.Light.Max,
+            dto.OptimalParameters.Salinity.Min,
+            dto.OptimalParameters.Salinity.Max,
+            dto.OptimalParameters.Ph.Min,
+            dto.OptimalParameters.Ph.Max
+            )).ToList();
 
         await context.Plants.AddRangeAsync(plants);
         await context.SaveChangesAsync();
@@ -50,19 +71,61 @@ public class PlantDataSeeder
 
 file class PlantSeedDto
 {
-    [JsonPropertyName("nombre_comun")] public string NombreComun { get; set; } = string.Empty;
-    [JsonPropertyName("nombre_cientifico")] public string NombreCientifico { get; set; } = string.Empty;
-    public string ImageUrl { get; set; } = string.Empty;
-    public string Descripcion { get; set; } = string.Empty;
-    [JsonPropertyName("parametros_optimos")] public OptimalParametersDto ParametrosOptimos { get; set; } = new();
+    [JsonPropertyName("nombre_comun")] public string CommonName { get; set; } = string.Empty;
+    [JsonPropertyName("nombre_cientifico")] public string ScientificName { get; set; } = string.Empty;
+    [JsonPropertyName("imageUrl")] public string ImageUrl { get; set; } = string.Empty;
+    [JsonPropertyName("descripcion")] public string Description { get; set; } = string.Empty;
+    [JsonPropertyName("identificacion_visual")] public VisualIdentificationDto VisualIdentification { get; set; } = new();
+    [JsonPropertyName("filtros_busqueda")] public SearchFiltersDto SearchFilters { get; set; } = new();
+
+    [JsonPropertyName("parametros_optimos")] public OptimalParametersDto OptimalParameters { get; set; } = new();
+
+}
+file class VisualIdentificationDto
+{
+    [JsonPropertyName("habito_crecimiento")] public string GrowthHabit { get; set; } = "";
+    [JsonPropertyName("hoja")] public LeafDto Leaf { get; set; } = new();
+    [JsonPropertyName("flor")] public FlowerDto Flower { get; set; } = new();
+    [JsonPropertyName("fruto")] public FruitDto Fruit { get; set; } = new();
+}
+
+file class LeafDto
+{
+    [JsonPropertyName("forma")] public string Shape { get; set; } = string.Empty;
+    [JsonPropertyName("tamano_relativo")] public string RelativeSize { get; set; } = string.Empty;
+    [JsonPropertyName("textura")] public List<string> Texture { get; set; } = new List<string>();
+    [JsonPropertyName("borde")] public string Edge { get; set; } = string.Empty;
+    [JsonPropertyName("patron")] public string Pattern { get; set; } = string.Empty;
+    [JsonPropertyName("color_principal")] public string MainColors { get; set; } = string.Empty;
+    [JsonPropertyName("colores_secundarios")] public List<string> SecondaryColor { get; set; } = new List<string>();
+}
+
+file class FlowerDto
+{
+    [JsonPropertyName("presente")] public bool Present { get; set; } = false;
+    [JsonPropertyName("color")] public List<string> Color { get; set; } = new List<string>();
+    [JsonPropertyName("forma")] public string Shape { get; set; } = string.Empty;
+    [JsonPropertyName("fragancia")] public bool Fragance { get; set; } = false;
+}
+file class FruitDto
+{
+    [JsonPropertyName("presente")] public bool Present { get; init; } = false;
+}
+file class SearchFiltersDto
+{
+    [JsonPropertyName("dificultad")] public string Difficulty { get; set; } = "";
+    [JsonPropertyName("ubicacion")] public List<string> Ubication { get; set; } = new List<string>();
+    [JsonPropertyName("luz")] public string Light { get; set; } = "";
+    [JsonPropertyName("tamano_potencial")] public string SizePotential { get; set; } = "";
+    [JsonPropertyName("tags")] public List<string> Tags { get; set; } = new List<string>();
 }
 file class OptimalParametersDto
 {
-    [JsonPropertyName("temperatura_ambiente")] public RangeDto<double> TemperaturaAmbiente { get; set; } = new();
-    public RangeDto<int> Humedad { get; set; } = new();
-    public RangeDto<int> Luminosidad { get; set; } = new();
-    [JsonPropertyName("salinidad_suelo")] public RangeDto<double> SalinidadSuelo { get; set; } = new();
-    [JsonPropertyName("ph_suelo")] public RangeDto<double> PhSuelo { get; set; } = new();
+    [JsonPropertyName("temperatura_ambiente")] public RangeDto<double> Temperature { get; set; } = new();
+    [JsonPropertyName("humedad")] public RangeDto<int> Humidity { get; set; } = new();
+    [JsonPropertyName("luminosidad")] public RangeDto<int> Light { get; set; } = new();
+    [JsonPropertyName("salinidad_suelo")] public RangeDto<double> Salinity { get; set; } = new();
+    [JsonPropertyName("ph_suelo")] public RangeDto<double> Ph { get; set; } = new();
 }
 file class RangeDto<T>
 {

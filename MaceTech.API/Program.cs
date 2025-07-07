@@ -1,3 +1,5 @@
+using System;
+using System.IO;
 using FirebaseAdmin;
 using FirebaseAdmin.Auth;
 using Google.Apis.Auth.OAuth2;
@@ -29,6 +31,7 @@ using MaceTech.API.IAM.Infrastructure.Pipeline.Middleware.Extensions;
 using MaceTech.API.IAM.Infrastructure.Tokens.JWT.Configuration;
 using MaceTech.API.IAM.Interfaces.ACL;
 using MaceTech.API.IAM.Interfaces.ACL.Services;
+using MaceTech.API.Planning.Infrastructure.Persistence.EFC.Seeders;
 using MaceTech.API.Profiles.Application.Internal.CommandServices;
 using MaceTech.API.Profiles.Application.Internal.QueryServices;
 using MaceTech.API.Profiles.Domain.Repositories;
@@ -50,7 +53,12 @@ using MaceTech.API.SP.Infrastructure.Persistence.EFC.Repositories;
 using MaceTech.API.SP.Infrastructure.Plans.Repository;
 using MaceTech.API.SP.Infrastructure.Sku;
 using MediatR;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Stripe;
 using TokenService = MaceTech.API.IAM.Infrastructure.Tokens.JWT.Services.TokenService;
@@ -192,6 +200,9 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<AppDbContext>();
+    // var seeder = new PlantDataSeeder();
+    // var jsonFilePath = Path.Combine(AppContext.BaseDirectory, "Plants.json");
+    // await seeder.SeedAsync(context, jsonFilePath);
     context.Database.EnsureCreated();
 }
 

@@ -1,4 +1,3 @@
-using System.Text.Json.Serialization;
 using MaceTech.API.ARM.Domain.Model.Commands;
 using MaceTech.API.ARM.Domain.Model.Constants;
 using MaceTech.API.ARM.Domain.Model.Enums;
@@ -26,7 +25,6 @@ public class Pot : AuditEntity
     
     public PotStatus Status { get; set; } = PotStatus.Healthy;
     public DateTimeOffset AssignedAt { get; set; } = DateTimeOffset.UtcNow;
-    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
     
     //  @Constructors
     public Pot() { }

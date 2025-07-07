@@ -20,12 +20,12 @@ public class Alert
         Timestamp = DateTime.UtcNow;
     }
     
-    public Alert(string deviceId, string alertType, float triggerValue, Recommendation recommendation)
+    public Alert(string deviceId, string alertType, float triggerValue, string recommendationText, string recommendationUrgency, string recommendationGuideUrl)
     {
         DeviceId = deviceId;
         AlertType = alertType;
         TriggerValue = triggerValue;
-        GeneratedRecommendation = recommendation;
+        GeneratedRecommendation = new Recommendation(recommendationText, recommendationUrgency, recommendationGuideUrl);
         Timestamp = DateTime.UtcNow;
     }
 }
