@@ -23,16 +23,36 @@ public class UsersController(
     FirebaseAuth auth
     ) : ControllerBase
 {
-    [HttpGet("{uid}")]
-    public async Task<IActionResult> GetUserById(string uid)
+    /// <summary>
+    ///     Get the user credentials.
+    /// </summary>
+    /// <remarks>
+    ///     Get the user credential by the user id such as the email address.
+    /// </remarks>
+    /// <response code="200">Returns <b>the user id</b> and <b>the email address</b>.</response>
+    /// <response code="404">No user found with that user id.</response>
+    [HttpGet("{userId}")]
+    public async Task<IActionResult> GetUserById(string userId)
     {
-        var getUserByIdQuery = new GetUserByUidQuery(uid);
+        var getUserByIdQuery = new GetUserByUidQuery(userId);
         var user = await userQueryService.Handle(getUserByIdQuery);
         if (user is null) return NotFound();
         var userResource = UserResourceFromEntityAssembler.ToResourceFromEntity(user);
         return Ok(userResource);
     }
     
+    /// <summary>
+    ///     Change the password of the current user.
+    /// </summary>
+    /// <remarks>
+    ///     Login into the system. This endpoint uses an instance of a <c>ChangePasswordResource</c>.
+    /// 
+    ///     <para>Overview of all parameters:</para>
+    ///         <para> &#149; <b>NewPassword</b>: A new password. </para>
+    /// </remarks>
+    /// <response code="200">Returns a <b>confirmation</b> message.</response>
+    /// <response code="400">The new password must be at least 6 characters long.</response>
+    /// <response code="401">Unauthorized. Check the token.</response>
     [Authorize]
     [HttpPost("me/password")]
     public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordResource resource)
@@ -66,6 +86,15 @@ public class UsersController(
         }
     }
 
+    /// <summary>
+    ///     Delete an account.
+    /// </summary>
+    /// <remarks>
+    ///     <b>Logically</b> delete an account. This endpoint does not require any parameters.
+    /// </remarks>
+    /// <response code="200">Returns a <b>confirmation</b> message.</response>
+    /// <response code="401">Unauthorized. Check the token.</response>
+    /// <response code="404">User not found.</response>
     [Authorize]
     [HttpDelete("me")]
     public async Task<IActionResult> DeleteAccount()

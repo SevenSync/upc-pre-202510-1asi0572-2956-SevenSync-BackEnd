@@ -23,7 +23,7 @@ public class ProfileCommandService(
         if (string.IsNullOrWhiteSpace(street) || string.IsNullOrWhiteSpace(number) ||
             string.IsNullOrWhiteSpace(city) || string.IsNullOrWhiteSpace(postalCode) ||
             string.IsNullOrWhiteSpace(country))
-            return true;
+            return false;
 
         if (string.IsNullOrWhiteSpace(countryCode) || string.IsNullOrWhiteSpace(phoneNumber))
             return false;

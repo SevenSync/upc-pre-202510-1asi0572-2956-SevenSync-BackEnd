@@ -45,7 +45,7 @@ public class ExceptionHandlerMiddleware(RequestDelegate next)
                 Type   = "FallThroughException",
                 Title  = "Internal server error",
                 Status = StatusCodes.Status409Conflict,
-                Detail = "An unexpected error occurred. That's all we know."
+                Detail = "Exception: " + exception.Message + " | StackTrace: " + exception.StackTrace
             }
         };
         context.Response.ContentType = "application/problem+json";

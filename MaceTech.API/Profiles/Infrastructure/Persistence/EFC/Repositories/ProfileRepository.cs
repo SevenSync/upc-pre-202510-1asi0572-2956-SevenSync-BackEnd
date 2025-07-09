@@ -17,6 +17,6 @@ public class ProfileRepository(
 
     public Task<Profile?> FindProfileByUidAsync(string uid)
     {
-        return Context.Set<Profile>().Where(p => p.Uid == uid).FirstOrDefaultAsync();
+        return Context.Set<Profile>().Where(p => p.UserId == uid).FirstOrDefaultAsync();
     }
 }

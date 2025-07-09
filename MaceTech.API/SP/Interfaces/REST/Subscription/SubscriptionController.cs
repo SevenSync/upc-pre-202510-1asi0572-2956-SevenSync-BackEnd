@@ -24,6 +24,14 @@ public class SubscriptionsController(
     private readonly SubscriptionService _stripeSubs = new();
     
     //  |: Functions
+    /// <summary>
+    ///     Current user's subscription.
+    /// </summary>
+    /// <remarks>
+    ///     Returns the current subscription status of the user.
+    /// </remarks>
+    /// <response code="200">Returns the current subscription status.</response>
+    /// <response code="401">Unauthorized. Check the token.</response>
     [Authorize]
     [HttpGet]
     public async Task<IActionResult> GetMySubscription()
@@ -41,11 +49,21 @@ public class SubscriptionsController(
         return Ok(response);
     }
     
+    /// <summary>
+    ///     Cancel subscription.
+    /// </summary>
+    /// <remarks>
+    ///     Cancel the current user's subscription. 
+    /// </remarks>
+    /// <response code="200">Returns a <b>confirmation</b> message.</response>
+    /// <response code="401">Unauthorized. Check the token.</response>
+    /// <response code="404">No current subscription found.</response>
     [Authorize]
     [HttpDelete]
-    public async Task<IActionResult> CancelMySubscription([FromBody] CancelSubscriptionResource resource)
+    public async Task<IActionResult> CancelMySubscription()
     {
-        var localSub = await subscriptionQueryService.Handle(new GetSubscriptionStatusQuery(resource.Uid));
+        var uid = iamContextFacade.GetUserUidFromContext(this.HttpContext);
+        var localSub = await subscriptionQueryService.Handle(new GetSubscriptionStatusQuery(uid));
         if (localSub is null)
         {
             return NotFound("No active subscription found for this user.");

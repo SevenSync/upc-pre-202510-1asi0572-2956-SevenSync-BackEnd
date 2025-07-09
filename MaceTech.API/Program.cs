@@ -1,11 +1,14 @@
 using System;
 using System.IO;
+using System.Reflection;
 using FirebaseAdmin;
 using FirebaseAdmin.Auth;
 using Google.Apis.Auth.OAuth2;
 using MaceTech.API.Analytics.Application.Internal.CommandServices;
+using MaceTech.API.Analytics.Application.Internal.DomainServices;
 using MaceTech.API.Analytics.Application.Internal.QueryServices;
 using MaceTech.API.Analytics.Domain.Repositories;
+using MaceTech.API.Analytics.Domain.Services;
 using MaceTech.API.Analytics.Domain.Services.CommandServices;
 using MaceTech.API.Analytics.Domain.Services.QueriesServices;
 using MaceTech.API.Analytics.Infrastructure.Persistence.EFC.Repositories;
@@ -52,6 +55,14 @@ using MaceTech.API.SP.Domain.Services;
 using MaceTech.API.SP.Infrastructure.Persistence.EFC.Repositories;
 using MaceTech.API.SP.Infrastructure.Plans.Repository;
 using MaceTech.API.SP.Infrastructure.Sku;
+using MaceTech.API.Watering.Application.Internal.CommandServices;
+using MaceTech.API.Watering.Application.Internal.QueryServices;
+using MaceTech.API.Watering.Domain.Repositories;
+using MaceTech.API.Watering.Domain.Services.CommandServices;
+using MaceTech.API.Watering.Domain.Services.QueryServices;
+using MaceTech.API.Watering.Infrastructure.Persistence.EFC.Repositories;
+using MaceTech.API.Watering.Interfaces.ACL;
+using MaceTech.API.Watering.Interfaces.ACL.Services;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
@@ -119,7 +130,7 @@ builder.Services.AddSwaggerGen(c =>
         c.SwaggerDoc("v1", new OpenApiInfo
         {
             Title = "MaceTech API",
-            Version = "v0.3.1a (inDev)",
+            Version = "v. 1.0",
             Description = "MaceTech API Documentation",
             TermsOfService = new Uri("https://macetech.com/tos"),
             Contact = new OpenApiContact { Name = "MaceTech", Email = "support@macetech.com" },
@@ -148,6 +159,9 @@ builder.Services.AddSwaggerGen(c =>
                 }, []
             }
         });
+        
+        var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+        c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
     }
     );
 
@@ -186,6 +200,23 @@ builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
 builder.Services.AddScoped<ISubscriptionCommandService, SubscriptionCommandService>();
 builder.Services.AddScoped<ISubscriptionQueryService, SubscriptionQueryService>();
 builder.Services.AddScoped<ISkuAndPriceIdConverter, SkuAndStipePriceConverter>();
+
+//      |: Analytics Bounded Context Injection Configuration
+builder.Services.AddScoped<IPotRecordRepository, PotRecordRepository>();
+builder.Services.AddScoped<IPotRecordCommandService, PotRecordCommandService>();
+builder.Services.AddScoped<IPotRecordQueryService, PotRecordQueryService>();
+builder.Services.AddScoped<IAlertRepository, AlertRepository>();
+builder.Services.AddScoped<IAlertCommandService, AlertCommandService>();
+builder.Services.AddScoped<IAnalyticsQueryService, AnalyticsQueryService>();
+builder.Services.AddScoped<IAlertQueryService, AlertQueryService>(); 
+builder.Services.AddScoped<IAlertsContextFacade, AlertsContextFacade>();
+builder.Services.AddScoped<IRecommendationGenerationService, RecommendationGenerationService>();
+builder.Services.AddScoped<IWateringLogContextFacade, WateringLogContextFacade>();
+builder.Services.AddScoped<IWateringContextFacade, WateringContextFacade>();
+builder.Services.AddScoped<IWateringLogCommandService, WateringLogCommandService>();
+builder.Services.AddScoped<IWateringLogQueryService, WateringLogQueryService>();
+builder.Services.AddScoped<IWateringLogRepository, WateringLogRepository>();
+builder.Services.AddScoped<IAnalyticsDomainService, AnalyticsDomainService>();
 
 //      |: Asset and Resource Management Bounded Context Injection Configuration
 builder.Services.AddScoped<IPotRepository, PotRepository>();

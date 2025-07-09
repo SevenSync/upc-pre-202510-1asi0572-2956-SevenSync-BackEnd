@@ -17,6 +17,12 @@ public class WebHooksController(
     ISkuAndPriceIdConverter skuAndProductIdConverter
     ): ControllerBase
 {
+    /// <summary>
+    ///     Webhooks endpoint for Stripe events.
+    /// </summary>
+    /// <remarks>
+    ///     Don't mind this endpoint, it's just a webhook for Stripe events.
+    /// </remarks>
     [HttpPost]
     [AllowAnonymous]
     public async Task<IActionResult> Handle()

@@ -9,7 +9,7 @@ public class Profile : AuditEntity
 {
     //  @Properties
     public long Id { get; }
-    public string Uid { get; private set; }
+    public string UserId { get; private set; }
     public PersonName Name { get; private set; }
     public PersonAddress Address { get; private set; }
     public PhoneNumber PhoneNumber { get; private set; }
@@ -22,20 +22,20 @@ public class Profile : AuditEntity
     //  @Constructors
     public Profile()
     {
-        Uid = "";
+        UserId = "";
         Name = new PersonName();
         Address = new PersonAddress();
         PhoneNumber = new PhoneNumber();
     }
 
     public Profile(
-        string uid,
+        string userId,
         string firstName, string lastName,
         string street, string number, string city, string postalCode, string country, 
         string countryCode, string phoneNumber
     )
     {
-        Uid = uid;
+        UserId = userId;
         Name = new PersonName(firstName, lastName);
         Address = new PersonAddress(street, number, city, postalCode, country);
         PhoneNumber = new PhoneNumber(countryCode, phoneNumber);
@@ -43,7 +43,7 @@ public class Profile : AuditEntity
     
     public Profile(CreateProfileCommand command)
     {
-        Uid = command.Uid;
+        UserId = command.Uid;
         Name = new PersonName(command.FirstName, command.LastName);
         Address = new PersonAddress(command.Street, command.Number, command.City, command.PostalCode, command.Country);
         PhoneNumber = new PhoneNumber(command.CountryCode, command.PhoneNumber);

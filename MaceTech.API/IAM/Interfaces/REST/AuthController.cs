@@ -55,6 +55,21 @@ public class AuthController(
         return await response.Content.ReadFromJsonAsync<FirebaseSignInResponse>(cancellationToken: ct);
     }
     
+    /// <summary>
+    ///     Register a new user.
+    /// </summary>
+    /// <param name="resource">Representation of a registration request. Fill up all parameters.</param>
+    /// <remarks>
+    ///     Register into the system. This endpoint uses an instance of a <c>SignUpResource</c>.
+    /// 
+    ///     <para>Overview of all parameters:</para>
+    ///         <para> &#149; <b>Email</b>: A functional email. </para>
+    ///         <para> &#149; <b>Password</b>: The password. </para>
+    ///
+    ///     After registration, remember to verify your email address by clicking the link sent to your email.
+    /// </remarks>
+    /// <response code="200">Returns <b>a confirmation message</b> for the new user registered.</response>
+    /// <response code="400">You <b>didn't provide correct information</b> or the email is <b>already taken</b>.</response>
     [HttpPost("register")]
     [AllowAnonymous]
     public async Task<IActionResult> Register([FromBody] SignUpResource resource)
@@ -71,13 +86,13 @@ public class AuthController(
         try
         {
             var user = await auth.CreateUserAsync(args);
-            
+
             var command = SignUpCommandFromResourceAssembler.ToCommandFromResource(user.Uid, resource);
             await userCommandService.Handle(command);
-            
+
             var link = await auth.GenerateEmailVerificationLinkAsync(resource.Email);
             await emailSender.SendEmailAsync(emailComposer.ComposeWelcomeEmail(resource.Email, link));
-            
+
             return Ok(new SignUpResponse(Created: true));
         }
         catch (FirebaseAuthException e) when (e.AuthErrorCode == AuthErrorCode.EmailAlreadyExists)
@@ -86,6 +101,19 @@ public class AuthController(
         }
     }
 
+    /// <summary>
+    ///     Login a user.
+    /// </summary>
+    /// <param name="resource">Representation of a login request. Fill up all parameters.</param>
+    /// <remarks>
+    ///     Login into the system. This endpoint uses an instance of a <c>SignInResource</c>.
+    /// 
+    ///     <para>Overview of all parameters:</para>
+    ///         <para> &#149; <b>Email</b>: A registered and verified email. </para>
+    ///         <para> &#149; <b>Password</b>: The password. </para>
+    /// </remarks>
+    /// <response code="200">Returns <b>the associated user identifier</b> and a <b>token</b>.</response>
+    /// <response code="401">Unauthorized. What else to be said.</response>
     [HttpPost("login")]
     [AllowAnonymous]
     public async Task<IActionResult> Login([FromBody] SignInResource resource)
@@ -100,6 +128,14 @@ public class AuthController(
         return Ok(new { user.Uid, token.token });
     }
 
+    /// <summary>
+    ///     Logout a user.
+    /// </summary>
+    /// <remarks>
+    ///     Logout. Just as simple as that.
+    /// </remarks>
+    /// <response code="200">No returns. An ok response shows success.</response>
+    /// <response code="401">Unauthorized. Check the token; maybe it has expired.</response>
     [Authorize]
     [HttpPost("logout")]
     public async Task<IActionResult> Logout()
@@ -116,6 +152,21 @@ public class AuthController(
         return NoContent();
     }
     
+    /// <summary>
+    ///     A password reset request.
+    /// </summary>
+    /// <param name="resource">Representation of a password-reset request resource. Fill up all parameters.</param>
+    /// <remarks>
+    ///     Request a password reset. This endpoint uses an instance of a <c>PasswordResetResource</c>.
+    /// 
+    ///     <para>Overview of all parameters:</para>
+    ///         <para> &#149; <b>Email</b>: A registered and verified email. </para>
+    ///
+    ///     Check your email inbox for a link to reset your password and follow through.
+    /// </remarks>
+    /// <response code="200">Returns <b>a confirmation message</b>.</response>
+    /// <response code="400">In invalid email has been used.</response>
+    /// <response code="404">No user found.</response>
     [HttpPatch("password-reset/request")]
     [AllowAnonymous]
     public async Task<IActionResult> RequestPasswordReset([FromBody] PasswordResetResource resource)

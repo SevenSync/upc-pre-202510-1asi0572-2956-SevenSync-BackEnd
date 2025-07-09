@@ -9,7 +9,7 @@ public static class CreateProfileCommandFromResourceAssembler
     {
         return new CreateProfileCommand(
             uid, resource.FirstName, resource.LastName,
-            resource.Street, resource.Number, resource.City, resource.PostalCode, resource.Country,
+            resource.Street, resource.BuildingNumber, resource.City, resource.PostalCode, resource.Country,
             resource.CountryCode, resource.PhoneNumber
             );
     }

@@ -9,7 +9,7 @@ public static class UpdateProfileCommandFromResourceAssembler
     {
         return new UpdateProfileCommand(
             uid, resource.FirstName, resource.LastName,
-            resource.Street, resource.Number, resource.City, resource.PostalCode, resource.Country,
+            resource.Street, resource.BuildingNumber, resource.City, resource.PostalCode, resource.Country,
             resource.CountryCode, resource.PhoneNumber
             );
     }

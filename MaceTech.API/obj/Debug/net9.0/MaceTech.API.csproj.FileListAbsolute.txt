@@ -139,7 +139,6 @@ C:\Users\USUARIO\Desktop\new-iot\upc-pre-202510-1asi0572-2956-SevenSync-BackEnd\
 C:\Users\USUARIO\Desktop\new-iot\upc-pre-202510-1asi0572-2956-SevenSync-BackEnd\MaceTech.API\obj\Debug\net9.0\MaceTech.API.pdb
 C:\Users\USUARIO\Desktop\new-iot\upc-pre-202510-1asi0572-2956-SevenSync-BackEnd\MaceTech.API\bin\Debug\net9.0\appsettings.Development.json
 C:\Users\USUARIO\Desktop\new-iot\upc-pre-202510-1asi0572-2956-SevenSync-BackEnd\MaceTech.API\bin\Debug\net9.0\appsettings.json
-C:\Users\USUARIO\Desktop\new-iot\upc-pre-202510-1asi0572-2956-SevenSync-BackEnd\MaceTech.API\bin\Debug\net9.0\SubscriptionsAndPayments\Infrastructure\Plans\Content\subscription-plans.json
 C:\Users\USUARIO\Desktop\new-iot\upc-pre-202510-1asi0572-2956-SevenSync-BackEnd\MaceTech.API\bin\Debug\net9.0\MaceTech.API.staticwebassets.endpoints.json
 C:\Users\USUARIO\Desktop\new-iot\upc-pre-202510-1asi0572-2956-SevenSync-BackEnd\MaceTech.API\bin\Debug\net9.0\MaceTech.API.exe
 C:\Users\USUARIO\Desktop\new-iot\upc-pre-202510-1asi0572-2956-SevenSync-BackEnd\MaceTech.API\bin\Debug\net9.0\MaceTech.API.deps.json
@@ -270,3 +269,7 @@ C:\Users\USUARIO\Desktop\new-iot\upc-pre-202510-1asi0572-2956-SevenSync-BackEnd\
 C:\Users\USUARIO\Desktop\new-iot\upc-pre-202510-1asi0572-2956-SevenSync-BackEnd\MaceTech.API\obj\Debug\net9.0\ref\MaceTech.API.dll
 C:\Users\USUARIO\Desktop\new-iot\upc-pre-202510-1asi0572-2956-SevenSync-BackEnd\MaceTech.API\bin\Debug\net9.0\MediatR.Extensions.Microsoft.DependencyInjection.dll
 C:\Users\USUARIO\Desktop\new-iot\upc-pre-202510-1asi0572-2956-SevenSync-BackEnd\MaceTech.API\bin\Debug\net9.0\macetech-101-firebase-adminsdk-fbsvc-33a4c94a5a.json
+C:\Users\USUARIO\Desktop\new-iot\upc-pre-202510-1asi0572-2956-SevenSync-BackEnd\MaceTech.API\bin\Debug\net9.0\Plants.json
+C:\Users\USUARIO\Desktop\new-iot\upc-pre-202510-1asi0572-2956-SevenSync-BackEnd\MaceTech.API\bin\Debug\net9.0\SP\Infrastructure\Plans\Content\subscription-plans.json
+C:\Users\USUARIO\Desktop\new-iot\upc-pre-202510-1asi0572-2956-SevenSync-BackEnd\MaceTech.API\bin\Debug\net9.0\MaceTech.API.xml
+C:\Users\USUARIO\Desktop\new-iot\upc-pre-202510-1asi0572-2956-SevenSync-BackEnd\MaceTech.API\obj\Debug\net9.0\MaceTech.API.xml

@@ -16,6 +16,28 @@ public class CheckoutSessionsController(
     ): ControllerBase
 {
     //  |: Functions
+    /// <summary>
+    ///     Creates a checkout session for a subscription.
+    /// </summary>
+    /// <remarks>
+    ///     A checkout session is created for a subscription based on the SKU provided in the request.
+    ///     A checkout session allows the user to complete the payment process for a selected subscription.
+    ///
+    ///     SKUs list:
+    /// 
+    ///     &#149; <b>premium_plan_monthly</b>: The monthly premium plan.
+    /// 
+    ///     &#149; <b>premium_plan_yearly</b>: The yearly premium plan.
+    /// 
+    ///
+    ///     Overview of all parameters:
+    /// 
+    ///     &#149; <b>Email</b>: The associated user's email.
+    /// 
+    ///     &#149; <b>Sku</b>: A valid SKU product.
+    /// </remarks>
+    /// <response code="200">Returns a <b>checkout url</b>.</response>
+    /// <response code="401">Unauthorized. Check the token.</response>
     [Authorize]
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CheckoutSubscriptionResource resource)
