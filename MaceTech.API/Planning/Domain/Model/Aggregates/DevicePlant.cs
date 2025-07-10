@@ -4,17 +4,17 @@ namespace MaceTech.API.Planning.Domain.Model.Aggregates;
 
 public class DevicePlant
 {
-    public int Id { get; private set; }
-    public string DeviceId { get; private set; }
-    public int PlantId { get; private set; }
+    public long Id { get; private set; }
+    public long DeviceId { get; private set; }
+    public long PlantId { get; private set; }
     public Plant Plant { get; private set; } = null!;
     
     public DevicePlant() 
     {
-        DeviceId = string.Empty;
+        DeviceId = 0;
     }
     
-    public DevicePlant(string deviceId, Plant plant)
+    public DevicePlant(long deviceId, Plant plant)
     {
         DeviceId = deviceId;
         Plant = plant;

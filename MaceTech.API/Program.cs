@@ -34,6 +34,12 @@ using MaceTech.API.IAM.Infrastructure.Pipeline.Middleware.Extensions;
 using MaceTech.API.IAM.Infrastructure.Tokens.JWT.Configuration;
 using MaceTech.API.IAM.Interfaces.ACL;
 using MaceTech.API.IAM.Interfaces.ACL.Services;
+using MaceTech.API.Planning.Application.Internal.CommandServices;
+using MaceTech.API.Planning.Application.Internal.QueryServices;
+using MaceTech.API.Planning.Domain.Repositories;
+using MaceTech.API.Planning.Domain.Services.CommandServices;
+using MaceTech.API.Planning.Domain.Services.QueryServices;
+using MaceTech.API.Planning.Infrastructure.Persistence.EFC.Repositories;
 using MaceTech.API.Planning.Infrastructure.Persistence.EFC.Seeders;
 using MaceTech.API.Profiles.Application.Internal.CommandServices;
 using MaceTech.API.Profiles.Application.Internal.QueryServices;
@@ -64,12 +70,7 @@ using MaceTech.API.Watering.Infrastructure.Persistence.EFC.Repositories;
 using MaceTech.API.Watering.Interfaces.ACL;
 using MaceTech.API.Watering.Interfaces.ACL.Services;
 using MediatR;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Stripe;
 using TokenService = MaceTech.API.IAM.Infrastructure.Tokens.JWT.Services.TokenService;
@@ -201,6 +202,13 @@ builder.Services.AddScoped<ISubscriptionCommandService, SubscriptionCommandServi
 builder.Services.AddScoped<ISubscriptionQueryService, SubscriptionQueryService>();
 builder.Services.AddScoped<ISkuAndPriceIdConverter, SkuAndStipePriceConverter>();
 
+//      |: Planning Bounded Context Injection Configuration
+builder.Services.AddScoped<IPlantRepository, PlantRepository>();
+builder.Services.AddScoped<IPlantQueryService, PlantQueryService>();
+builder.Services.AddScoped<IDevicePlantCommandService, DevicePlantCommandService>();
+builder.Services.AddScoped<IDevicePlantQueryService, DevicePlantQueryService>();
+builder.Services.AddScoped<IDevicePlantRepository, DevicePlantRepository>();
+
 //      |: Analytics Bounded Context Injection Configuration
 builder.Services.AddScoped<IPotRecordRepository, PotRecordRepository>();
 builder.Services.AddScoped<IPotRecordCommandService, PotRecordCommandService>();
@@ -214,7 +222,7 @@ builder.Services.AddScoped<IRecommendationGenerationService, RecommendationGener
 builder.Services.AddScoped<IWateringLogContextFacade, WateringLogContextFacade>();
 builder.Services.AddScoped<IWateringContextFacade, WateringContextFacade>();
 builder.Services.AddScoped<IWateringLogCommandService, WateringLogCommandService>();
-builder.Services.AddScoped<IWateringLogQueryService, WateringLogQueryService>();
+builder.Services.AddScoped<IWateringHistoryQueryService, WateringHistoryQueryService>();
 builder.Services.AddScoped<IWateringLogRepository, WateringLogRepository>();
 builder.Services.AddScoped<IAnalyticsDomainService, AnalyticsDomainService>();
 
@@ -223,7 +231,11 @@ builder.Services.AddScoped<IPotRepository, PotRepository>();
 builder.Services.AddScoped<IPotCommandService, PotCommandService>();
 builder.Services.AddScoped<IPotQueryService, PotQueryService>();
 
-
+//      |: Watering Bounded Context Injection Configuration
+builder.Services.AddScoped<IWateringLogRepository, WateringLogRepository>();
+builder.Services.AddScoped<IWateringLogCommandService, WateringLogCommandService>();
+builder.Services.AddScoped<IWateringHistoryQueryService, WateringHistoryQueryService>();    
+builder.Services.AddScoped<IWateringLogContextFacade, WateringLogContextFacade>();
 
 var app = builder.Build();
 
@@ -231,13 +243,13 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<AppDbContext>();
-    // var seeder = new PlantDataSeeder();
-    // var jsonFilePath = Path.Combine(AppContext.BaseDirectory, "Plants.json");
-    // await seeder.SeedAsync(context, jsonFilePath);
+    var seeder = new PlantDataSeeder();
+    var jsonFilePath = Path.Combine(AppContext.BaseDirectory, "Plants.json");
+    await seeder.SeedAsync(context, jsonFilePath);
     context.Database.EnsureCreated();
 }
 
-//  if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();

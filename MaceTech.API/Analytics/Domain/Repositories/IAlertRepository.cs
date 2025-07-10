@@ -5,5 +5,5 @@ namespace MaceTech.API.Analytics.Domain.Repositories;
 
 public interface IAlertRepository : IBaseRepository<Alert>
 {
-    Task<IEnumerable<Alert>> FindByDeviceIdAndDateRangeAsync(string deviceId, DateTime fromDate, DateTime toDate);
+    Task<IEnumerable<Alert>> FindByDeviceIdAndDateRangeAsync(long deviceId, DateTime fromDate, DateTime toDate);
 }

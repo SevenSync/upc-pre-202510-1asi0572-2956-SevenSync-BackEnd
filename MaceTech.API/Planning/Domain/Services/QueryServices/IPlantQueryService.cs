@@ -6,4 +6,6 @@ namespace MaceTech.API.Planning.Domain.Services.QueryServices;
 public interface IPlantQueryService
 {
     Task<IEnumerable<Plant>> Handle(GetAllPlantsQuery query);
+    
+    Task<Plant?> Handle(GetPlantByIdQuery query);
 }

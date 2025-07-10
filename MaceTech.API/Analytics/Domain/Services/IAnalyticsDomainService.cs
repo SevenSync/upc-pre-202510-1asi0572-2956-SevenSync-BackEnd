@@ -7,14 +7,14 @@ namespace MaceTech.API.Analytics.Domain.Services;
 public interface IAnalyticsDomainService
 {
     PotComparisonData CalculateComparisonForDevice(
-        string deviceId, 
+        long deviceId, 
         IEnumerable<PotRecord> records, 
         IEnumerable<AlertDataDto> alerts, 
         IEnumerable<WateringLogDataDto> wateringLogs
     );
     
     WaterSavedKpi CalculateWaterSavedKpi(
-        string deviceId,
+        long deviceId,
         DateTime date,
         IEnumerable<WateringLogDataDto> dailyWateringLogs
     );

@@ -8,7 +8,7 @@ namespace MaceTech.API.Planning.Infrastructure.Persistence.EFC.Repositories;
 
 public class DevicePlantRepository(AppDbContext context) : BaseRepository<DevicePlant>(context), IDevicePlantRepository
 {
-    public async Task<DevicePlant?> FindByDeviceIdAsync(string deviceId)
+    public async Task<DevicePlant?> FindByDeviceIdAsync(long deviceId)
     {
         return await Context.Set<DevicePlant>()
             .Include(dp => dp.Plant)

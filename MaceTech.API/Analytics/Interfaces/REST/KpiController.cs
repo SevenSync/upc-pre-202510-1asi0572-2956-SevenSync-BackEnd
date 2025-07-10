@@ -14,11 +14,11 @@ namespace MaceTech.API.Analytics.Interfaces.REST;
 public class KpiController(IKpiQueryService kpiQueryService) : ControllerBase
 {
     [HttpGet("water-saved")]
-    public async Task<IActionResult> GetWaterSavedKpi([FromQuery] string deviceId, [FromQuery] DateTime date)
+    public async Task<IActionResult> GetWaterSavedKpi([FromQuery] long deviceId, [FromQuery] DateTime date)
     {
-        if (string.IsNullOrWhiteSpace(deviceId))
+        if (deviceId <= 0)
         {
-            return BadRequest(new { message = "El 'deviceId' es requerido." });
+            return BadRequest(new { message = "Device Id must be a positive number." });
         }
 
         var query = new GetWaterSavedKpiQuery(deviceId, date);

@@ -1,7 +1,7 @@
 namespace MaceTech.API.Analytics.Interfaces.REST.Resources;
 
 public record PotComparisonResource(
-    string DeviceId,
+    long DeviceId,
     double WeeklyAvgTemperature,
     double WeeklyAvgHumidity,
     double WeeklyAvgPh,

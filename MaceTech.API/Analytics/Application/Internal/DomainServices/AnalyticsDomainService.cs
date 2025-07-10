@@ -10,7 +10,7 @@ public class AnalyticsDomainService : IAnalyticsDomainService
     
     private const double StandardDailyWateringMl = 500.0;
 
-    public PotComparisonData CalculateComparisonForDevice(string deviceId, IEnumerable<PotRecord> records, IEnumerable<AlertDataDto> alerts, IEnumerable<WateringLogDataDto> wateringLogs)
+    public PotComparisonData CalculateComparisonForDevice(long deviceId, IEnumerable<PotRecord> records, IEnumerable<AlertDataDto> alerts, IEnumerable<WateringLogDataDto> wateringLogs)
     {
         var potRecords = records.ToList();
         if (potRecords.Count == 0)
@@ -31,7 +31,7 @@ public class AnalyticsDomainService : IAnalyticsDomainService
         );
     }
     
-    public WaterSavedKpi CalculateWaterSavedKpi(string deviceId, DateTime date, IEnumerable<WateringLogDataDto> dailyWateringLogs)
+    public WaterSavedKpi CalculateWaterSavedKpi(long deviceId, DateTime date, IEnumerable<WateringLogDataDto> dailyWateringLogs)
     {
         var actualWateringMl = dailyWateringLogs.Select(log => log.WaterVolumeMl).Sum();
 

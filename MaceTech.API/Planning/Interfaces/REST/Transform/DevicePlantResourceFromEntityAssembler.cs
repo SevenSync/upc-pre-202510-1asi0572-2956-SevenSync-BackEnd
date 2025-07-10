@@ -9,10 +9,16 @@ public static class DevicePlantResourceFromEntityAssembler
     {
 
         return new DevicePlantResource(
-            entity.Id,
-            entity.DeviceId,
-            entity.PlantId,
-            entity.Plant.CommonName
+            entity.Plant.OptimalParameters.Temperature.Min,
+            entity.Plant.OptimalParameters.Temperature.Max,
+            entity.Plant.OptimalParameters.Humidity.Min,
+            entity.Plant.OptimalParameters.Humidity.Max,
+            entity.Plant.OptimalParameters.Light.Min,
+            entity.Plant.OptimalParameters.Light.Max,
+            entity.Plant.OptimalParameters.Salinity.Min,
+            entity.Plant.OptimalParameters.Salinity.Max,
+            entity.Plant.OptimalParameters.Ph.Min,
+            entity.Plant.OptimalParameters.Ph.Max
         );
     }
 }

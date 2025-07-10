@@ -1,7 +1,7 @@
 namespace MaceTech.API.Analytics.Domain.Model.ValueObjects;
 
 public record WaterSavedKpi(
-    string DeviceId,
+    long DeviceId,
     DateTime Date,
     double StandardWateringMl,
     double ActualWateringMl,

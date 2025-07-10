@@ -1,4 +1,5 @@
 using System.Net.Mime;
+using MaceTech.API.Analytics.Interfaces.REST.Resources;
 using MaceTech.API.ARM.Domain.Model.Commands;
 using MaceTech.API.ARM.Domain.Services;
 using MaceTech.API.ARM.Interfaces.REST.Resources;
@@ -126,7 +127,7 @@ public class PotsController(
     /// <response code="400">Bad request: check out your parameters.</response>
     /// <response code="401">Unauthorized. Check the token.</response>
     [Authorize]
-    [HttpPut("{potId:long}/assignee")]
+    [HttpPut("{potId:long}/assign")]
     public async Task<IActionResult> AssignPot(
         long potId,
         [FromBody] AssignPotToUserResource resource

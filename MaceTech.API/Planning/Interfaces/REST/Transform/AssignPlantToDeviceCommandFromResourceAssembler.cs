@@ -5,7 +5,7 @@ namespace MaceTech.API.Planning.Interfaces.REST.Transform;
 
 public static class AssignPlantToDeviceCommandFromResourceAssembler
 {
-    public static AssignPlantToDeviceCommand ToCommandFromResource(AssignPlantToDeviceResource resource, string deviceId)
+    public static AssignPlantToDeviceCommand ToCommandFromResource(AssignPlantToDeviceResource resource, long deviceId)
     {
         return new AssignPlantToDeviceCommand(deviceId, resource.PlantId);
     }

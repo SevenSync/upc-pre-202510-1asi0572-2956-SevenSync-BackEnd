@@ -3,17 +3,17 @@ using MaceTech.API.Watering.Interfaces.REST.Resources;
 
 namespace MaceTech.API.Watering.Interfaces.REST.Transform;
 
-public static class WateringLogResourceFromEntityAssembler
+public class WateringLogResourceFromEntityAssembler
 {
     public static WateringLogResource ToResourceFromEntity(WateringLog entity)
     {
-        return new WateringLogResource(
-            entity.Timestamp,
+        return new WateringLogResource
+        (
+            entity.Id,
+            entity.DeviceId,
             entity.DurationSeconds,
-            Math.Round(entity.WaterVolumeMl),
-            entity.InitialHumidity,
-            entity.FinalHumidity,
-            entity.Result
+            entity.WasSuccessful,
+            entity.Reason
         );
     }
 }

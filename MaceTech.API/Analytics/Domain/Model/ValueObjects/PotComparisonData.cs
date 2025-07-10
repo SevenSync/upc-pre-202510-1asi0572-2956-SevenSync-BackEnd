@@ -1,7 +1,7 @@
 namespace MaceTech.API.Analytics.Domain.Model.ValueObjects;
 
 public record PotComparisonData(
-    string DeviceId,
+    long DeviceId,
     double WeeklyAvgTemperature,
     double WeeklyAvgHumidity,
     double WeeklyAvgPh,

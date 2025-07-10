@@ -1,6 +1,7 @@
 using MaceTech.API.Shared.Infrastructure.Persistence.EFC.Configuration;
 using MaceTech.API.Shared.Infrastructure.Persistence.EFC.Repositories;
 using MaceTech.API.Watering.Domain.Model.Aggregates;
+using MaceTech.API.Watering.Domain.Model.Entity;
 using MaceTech.API.Watering.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,7 +9,7 @@ namespace MaceTech.API.Watering.Infrastructure.Persistence.EFC.Repositories;
 
 public class WateringLogRepository(AppDbContext context) : BaseRepository<WateringLog>(context), IWateringLogRepository
 {
-    public async Task<IEnumerable<WateringLog>> FindByDeviceIdAndDateRangeAsync(string deviceId, DateTime? fromDate, DateTime? toDate)
+    public async Task<WateringHistory> FindByDeviceIdAndDateRangeAsync(long deviceId, DateTime? fromDate, DateTime? toDate)
     {
         var query = Context.Set<WateringLog>().Where(w => w.DeviceId == deviceId);
 
@@ -21,6 +22,21 @@ public class WateringLogRepository(AppDbContext context) : BaseRepository<Wateri
             query = query.Where(w => w.Timestamp <= toDate.Value);
         }
 
-        return await query.OrderByDescending(w => w.Timestamp).ToListAsync();
+        var history = new WateringHistory(deviceId, query);
+        
+        history.OrderByTimestamp();
+        
+        return history;
+    }
+    
+    public async Task<WateringHistory> FindByDeviceIdAsync(long deviceId)
+    {
+        var query = Context.Set<WateringLog>().Where(w => w.DeviceId == deviceId);
+
+        var history = new WateringHistory(deviceId, query);
+        
+        history.OrderByTimestamp();
+        
+        return history;
     }
 }

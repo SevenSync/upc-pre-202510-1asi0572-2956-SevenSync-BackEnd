@@ -11,4 +11,8 @@ public class PlantQueryService(IPlantRepository plantRepository) : IPlantQuerySe
     {
         return await plantRepository.ListAsync();
     }
+    public async Task<Plant?> Handle(GetPlantByIdQuery query)
+    {
+        return await plantRepository.FindByIdAsync(query.plantId);
+    }
 }

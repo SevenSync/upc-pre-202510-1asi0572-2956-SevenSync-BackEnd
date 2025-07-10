@@ -5,5 +5,5 @@ namespace MaceTech.API.Watering.Domain.Services.CommandServices;
 
 public interface IWateringLogCommandService
 {
-    Task<WateringLog> Handle(LogWateringCommand command);
+    Task<WateringLog> Handle(CreateWateringLogCommand command);
 }

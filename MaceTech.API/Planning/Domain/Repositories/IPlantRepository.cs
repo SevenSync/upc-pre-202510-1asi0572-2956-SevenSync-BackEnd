@@ -6,5 +6,5 @@ namespace MaceTech.API.Planning.Domain.Repositories;
 public interface IPlantRepository : IBaseRepository<Plant>
 {
     new Task<IEnumerable<Plant>> ListAsync();
-    Task<Plant?> FindByIdAsync(int id);
+    Task<Plant?> FindByIdAsync(long id);
 }

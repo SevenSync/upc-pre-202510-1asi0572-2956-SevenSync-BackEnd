@@ -13,7 +13,7 @@ public class PlantRepository(AppDbContext context) : BaseRepository<Plant>(conte
         return await Context.Set<Plant>().ToListAsync();
     }
 
-    public async Task<Plant?> FindByIdAsync(int id)
+    public async Task<Plant?> FindByIdAsync(long id)
     {
         return await Context.Set<Plant>().FindAsync(id);
     }

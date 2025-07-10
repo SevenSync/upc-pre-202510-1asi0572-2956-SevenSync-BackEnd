@@ -1,3 +1,3 @@
 namespace MaceTech.API.Analytics.Domain.Model.Commands;
 
-public record CreateAlertCommand(string DeviceId, string AlertType, float Value);
+public record CreateAlertCommand(long DeviceId, string AlertType, float Value);

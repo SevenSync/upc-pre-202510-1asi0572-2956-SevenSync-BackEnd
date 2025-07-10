@@ -5,5 +5,5 @@ namespace MaceTech.API.Planning.Domain.Repositories;
 
 public interface IDevicePlantRepository : IBaseRepository<DevicePlant>
 {
-    Task<DevicePlant?> FindByDeviceIdAsync(string deviceId);
+    Task<DevicePlant?> FindByDeviceIdAsync(long deviceId);
 }

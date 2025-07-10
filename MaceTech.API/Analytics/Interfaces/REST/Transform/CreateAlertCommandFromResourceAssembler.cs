@@ -5,7 +5,7 @@ namespace MaceTech.API.Analytics.Interfaces.REST.Transform;
 
 public static class CreateAlertCommandFromResourceAssembler
 {
-    public static CreateAlertCommand ToCommandFromResource(CreateAlertResource resource, string deviceId)
+    public static CreateAlertCommand ToCommandFromResource(CreateAlertResource resource, long deviceId)
     {
         return new CreateAlertCommand(deviceId, resource.AlertType, resource.Value);
     }

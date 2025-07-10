@@ -4,5 +4,5 @@ namespace MaceTech.API.Analytics.Interfaces.ACL;
 
 public interface IWateringLogContextFacade
 {
-    Task<IEnumerable<WateringLogDataDto>> GetWateringLogHistoryForDevice(string deviceId, DateTime fromDate, DateTime toDate);
+    Task<IEnumerable<WateringLogDataDto>> GetWateringLogHistoryForDevice(long deviceId, DateTime fromDate, DateTime toDate);
 }

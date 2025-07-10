@@ -1,3 +1,3 @@
 namespace MaceTech.API.Analytics.Domain.Model.Queries;
 
-public record GetWaterSavedKpiQuery(string DeviceId, DateTime Date);
+public record GetWaterSavedKpiQuery(long DeviceId, DateTime Date);

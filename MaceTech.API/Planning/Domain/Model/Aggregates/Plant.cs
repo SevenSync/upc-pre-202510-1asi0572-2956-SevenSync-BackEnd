@@ -4,7 +4,7 @@ namespace MaceTech.API.Planning.Domain.Model.Aggregates;
 
 public class Plant
 {
-    public int Id { get; }
+    public long Id { get; }
     public string CommonName { get; private set; }
     public string ScientificName { get; private set; }
     public string ImageUrl { get; private set; }

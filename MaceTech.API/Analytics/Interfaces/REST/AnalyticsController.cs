@@ -15,7 +15,7 @@ namespace MaceTech.API.Analytics.Interfaces.REST;
 public class AnalyticsController(IAnalyticsQueryService analyticsQueryService) : ControllerBase
 {
     [HttpGet("comparison")]
-    public async Task<IActionResult> GetPotComparison([Required][FromQuery] List<string> deviceIds)
+    public async Task<IActionResult> GetPotComparison([Required][FromQuery] List<long> deviceIds)
     {
         if (deviceIds is null || deviceIds.Count == 0)
         {

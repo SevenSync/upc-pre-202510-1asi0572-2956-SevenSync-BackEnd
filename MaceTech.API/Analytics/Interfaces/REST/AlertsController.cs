@@ -31,7 +31,7 @@ public class AlertsController(IAlertCommandService alertCommandService) : Contro
     /// <response code="401">Unauthorized. Check the token.</response>
     [HttpPost]
     [AllowAnonymous]
-    public async Task<IActionResult> CreateAlert(string deviceId, [FromBody] CreateAlertResource resource)
+    public async Task<IActionResult> CreateAlert(long deviceId, [FromBody] CreateAlertResource resource)
     {
         var command = CreateAlertCommandFromResourceAssembler.ToCommandFromResource(resource, deviceId);
         var alert = await alertCommandService.Handle(command);
@@ -60,7 +60,7 @@ public class AlertsController(IAlertCommandService alertCommandService) : Contro
     /// <response code="400">The new password must be at least 6 characters long.</response>
     /// <response code="401">Unauthorized. Check the token.</response>
     [HttpGet]
-    public Task<IActionResult> GetAlertHistory(string deviceId, [FromQuery] DateTime? from, [FromQuery] DateTime? to)
+    public Task<IActionResult> GetAlertHistory(long deviceId, [FromQuery] DateTime? from, [FromQuery] DateTime? to)
     {
         return Task.FromResult<IActionResult>(NotFound("Functionality not yet implemented."));
     }

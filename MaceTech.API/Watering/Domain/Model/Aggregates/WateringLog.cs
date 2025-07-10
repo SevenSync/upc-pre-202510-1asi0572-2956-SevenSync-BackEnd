@@ -1,29 +1,44 @@
+using MaceTech.API.Watering.Domain.Model.Commands;
+
 namespace MaceTech.API.Watering.Domain.Model.Aggregates;
 
 public class WateringLog
 {
-    public int Id { get; private set; }
-    public string DeviceId { get; private set; }
+    public long Id { get; }
+    public long DeviceId { get; private set; }
     public DateTime Timestamp { get; private set; }
     public int DurationSeconds { get; private set; }
     public double WaterVolumeMl { get; private set; }
-    
-    public float InitialHumidity { get; private set; } 
-    public float FinalHumidity { get; private set; }
-    public string Result { get; private set; }
-    
-    private const double FlowRateMlPerSecond = 415;
+    public bool WasSuccessful { get; private set; }
+    public string Reason { get; private set; }
 
-    public WateringLog() { /* EF Core */ DeviceId = string.Empty; Result = string.Empty; }
+    public WateringLog()
+    {
+        DeviceId = 0;
+        Timestamp = DateTime.Now;
+        DurationSeconds = 0;
+        WaterVolumeMl = 0.0;
+        WasSuccessful = false;
+        Reason = string.Empty;
+    }
 
-    public WateringLog(string deviceId, int durationSeconds, float initialHumidity, float finalHumidity, bool success)
+    public WateringLog(CreateWateringLogCommand command)
+    {
+        DeviceId = command.DeviceId;
+        Timestamp = DateTime.UtcNow;
+        DurationSeconds = command.DurationSeconds;
+        WaterVolumeMl = command.DurationSeconds * 415; // 415 ml per second
+        WasSuccessful = command.WasSuccessful;
+        Reason = command.Reason;
+    }
+
+    public WateringLog(long deviceId, int durationSeconds, bool wasSuccessful, string reason)
     {
         DeviceId = deviceId;
         Timestamp = DateTime.UtcNow;
         DurationSeconds = durationSeconds;
-        WaterVolumeMl = durationSeconds * FlowRateMlPerSecond;
-        InitialHumidity = initialHumidity;
-        FinalHumidity = finalHumidity;
-        Result = success ? "Success" : "Failed";
+        WasSuccessful = wasSuccessful;
+        Reason = reason;
+        WaterVolumeMl = durationSeconds * 415;
     }
 }

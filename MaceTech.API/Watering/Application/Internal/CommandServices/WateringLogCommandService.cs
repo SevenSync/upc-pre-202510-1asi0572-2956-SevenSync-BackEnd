@@ -8,9 +8,9 @@ namespace MaceTech.API.Watering.Application.Internal.CommandServices;
 
 public class WateringLogCommandService(IWateringLogRepository wateringLogRepository, IUnitOfWork unitOfWork) : IWateringLogCommandService
 {
-    public async Task<WateringLog> Handle(LogWateringCommand command)
+    public async Task<WateringLog> Handle(CreateWateringLogCommand command)
     {
-        var log = new WateringLog(command.DeviceId, command.DurationSeconds, command.InitialHumidity, command.FinalHumidity, command.Success);
+        var log = new WateringLog(command);
         await wateringLogRepository.AddAsync(log);
         await unitOfWork.CompleteAsync();
         return log;

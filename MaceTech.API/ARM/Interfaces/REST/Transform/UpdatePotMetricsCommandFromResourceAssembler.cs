@@ -1,5 +1,5 @@
+using MaceTech.API.Analytics.Interfaces.REST.Resources;
 using MaceTech.API.ARM.Domain.Model.Commands;
-using MaceTech.API.Profiles.Interfaces.REST.Resources;
 
 namespace MaceTech.API.ARM.Interfaces.REST.Transform;
 

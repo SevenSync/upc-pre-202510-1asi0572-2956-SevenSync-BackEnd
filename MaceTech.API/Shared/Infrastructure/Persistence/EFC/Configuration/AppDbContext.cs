@@ -8,6 +8,7 @@ using MaceTech.API.Profiles.Domain.Model.Aggregates;
 using MaceTech.API.Profiles.Domain.Model.ValueObjects;
 using MaceTech.API.Shared.Infrastructure.Persistence.EFC.Configuration.Extensions;
 using MaceTech.API.SP.Domain.Model.Aggregates;
+using MaceTech.API.Watering.Domain.Model.Aggregates;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
@@ -15,14 +16,7 @@ namespace MaceTech.API.Shared.Infrastructure.Persistence.EFC.Configuration;
 
 public class AppDbContext(DbContextOptions options) : DbContext(options)
 {
-    public DbSet<User> Users { get; set; }
-    public DbSet<Profile> Profiles { get; set; }
-    public DbSet<PotRecord> PotRecords { get; set; }
-    public DbSet<Alert> Alerts { get; set; }
     public DbSet<Plant> Plants { get; set; }
-    public DbSet<DevicePlant> DevicePlants { get; set; }
-    public DbSet<Subscription> Subscriptions { get; set; }
-    public DbSet<Pot> Pots { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder builder)
     {
@@ -108,9 +102,9 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         {
             r.WithOwner().HasForeignKey("Id");
             r.HasKey("Id");
-            r.Property(re => re.Text).IsRequired().HasMaxLength(500);
-            r.Property(re => re.Urgency).IsRequired().HasMaxLength(50);
-            r.Property(re => re.GuideUrl).HasMaxLength(255);
+            r.Property(re => re.Text).IsRequired().HasMaxLength(500).HasColumnName("recommendation_text");
+            r.Property(re => re.Urgency).IsRequired().HasMaxLength(50).HasColumnName("recommendation_urgency");
+            r.Property(re => re.GuideUrl).HasMaxLength(255).HasColumnName("recommendation_guide_url");
         });
 
         builder.Entity<PotRecord>().ToTable("PotRecords");
@@ -133,72 +127,74 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         builder.Entity<Plant>().Property(p => p.ImageUrl).HasMaxLength(255);
         builder.Entity<Plant>().Property(p => p.Description).HasMaxLength(1000);
         
-        var stringListComparer = new ValueComparer<List<string>>(
-        (c1, c2) => c1.SequenceEqual(c2),
-        c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
-        c => c.ToList());
+       var stringListComparer = new ValueComparer<List<string>>(
+            (c1, c2) => (c1 ?? Enumerable.Empty<string>()).SequenceEqual(c2 ?? Enumerable.Empty<string>()),
+            c => (c ?? Enumerable.Empty<string>()).Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+            c => c.ToList());
                                                                                                       
         builder.Entity<Plant>().OwnsOne<OptimalParameters>(p => p.OptimalParameters,
-        parameters =>
-        {
-            parameters.WithOwner().HasForeignKey("Id");
-            parameters.HasKey("Id");
-            parameters.OwnsOne<Range<double>>(po => po.Temperature, temp => 
+            parameters =>
             {
-                temp.WithOwner().HasForeignKey("Id");
-                temp.HasKey("Id");
-                temp.Property(t => t.Min);
-                temp.Property(t => t.Max);
+                parameters.WithOwner().HasForeignKey("Id");
+                parameters.HasKey("Id");
+
+                parameters.OwnsOne<Range<double>>(po => po.Temperature, temp =>
+                {
+                    temp.WithOwner().HasForeignKey("Id");
+                    temp.HasKey("Id");
+                    temp.Property(t => t.Min).HasColumnName("temperature_min");
+                    temp.Property(t => t.Max).HasColumnName("temperature_max");
+                });
+
+                parameters.OwnsOne<Range<double>>(po => po.Humidity, hum =>
+                {
+                    hum.WithOwner().HasForeignKey("Id");
+                    hum.HasKey("Id");
+                    hum.Property(h => h.Min).HasColumnName("humidity_min");
+                    hum.Property(h => h.Max).HasColumnName("humidity_max");
+                });
+
+                parameters.OwnsOne<Range<double>>(po => po.Light, lum =>
+                {
+                    lum.WithOwner().HasForeignKey("Id");
+                    lum.HasKey("Id");
+                    lum.Property(l => l.Min).HasColumnName("light_min");
+                    lum.Property(l => l.Max).HasColumnName("light_max");
+                });
+
+                parameters.OwnsOne<Range<double>>(po => po.Salinity, sal =>
+                {
+                    sal.WithOwner().HasForeignKey("Id");
+                    sal.HasKey("Id");
+                    sal.Property(s => s.Min).HasColumnName("salinity_min");
+                    sal.Property(s => s.Max).HasColumnName("salinity_max");
+                });
+
+                parameters.OwnsOne<Range<double>>(po => po.Ph, ph =>
+                {
+                    ph.WithOwner().HasForeignKey("Id");
+                    ph.HasKey("Id");
+                    ph.Property(p => p.Min).HasColumnName("ph_min");
+                    ph.Property(p => p.Max).HasColumnName("ph_max");
+                });
             });
-            parameters.OwnsOne<Range<double>>(po => po.Humidity,
-            hum =>
-            {
-                hum.WithOwner().HasForeignKey("Id");
-                hum.HasKey("Id");
-                hum.Property(h => h.Min);
-                hum.Property(h => h.Max);
-            });
-            parameters.OwnsOne<Range<double>>(po => po.Light,
-            lum =>
-            {
-                lum.WithOwner().HasForeignKey("Id");
-                lum.HasKey("Id");
-                lum.Property(l => l.Min);
-                lum.Property(l => l.Max);
-            });
-            parameters.OwnsOne<Range<double>>(po => po.Salinity,
-            sal =>
-            {
-                sal.WithOwner().HasForeignKey("Id");
-                sal.HasKey("Id");
-                sal.Property(s => s.Min);
-                sal.Property(s => s.Max);
-            });
-            parameters.OwnsOne<Range<double>>(po => po.Ph,
-            ph =>
-            {
-                ph.WithOwner().HasForeignKey("Id");
-                ph.HasKey("Id");
-                ph.Property(p => p.Min);
-                ph.Property(p => p.Max);
-            });
-        });
                                                                                                              
         builder.Entity<Plant>().OwnsOne<SearchFilters>(p => p.SearchFilters, sf =>
         {
             sf.WithOwner().HasForeignKey("Id");
             sf.HasKey("Id");
-            sf.Property(s => s.Difficulty);
-            sf.Property(s => s.Light);
-            sf.Property(s => s.SizePotential);
-            sf.Property(s => s.Ubication)
+            sf.Property(s => s.Difficulty).HasColumnName("search_difficulty");
+            sf.Property(s => s.Light).HasColumnName("search_light");
+            sf.Property(s => s.SizePotential).HasColumnName("search_size_potential");
+            sf.Property(s => s.Ubication).HasColumnName("search_ubicacion")
             .HasConversion(
                 v => string.Join(",", v),                                                                          
                 v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList(),                                 
                 stringListComparer                                                                                 
             );
 
-            sf.Property(s => s.Tags).HasConversion(
+            sf.Property(s => s.Tags).HasColumnName("search_tags")
+                .HasConversion(
                 v => string.Join(",", v), 
                 v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList(),
                 stringListComparer
@@ -210,24 +206,32 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
             vi.WithOwner().HasForeignKey("Id");
             vi.HasKey("Id");
 
-            vi.Property(v => v.GrowthHabit);
+            vi.Property(v => v.GrowthHabit).HasColumnName("growth_habit");
 
             vi.OwnsOne<Leaf>(v => v.Leaf, leaf =>
-        {                                                                                                       
-            leaf.WithOwner() .HasForeignKey("Id");
-            leaf.HasKey("Id");
-            leaf.Property(l => l.Shape);
-            leaf.Property(l => l.RelativeSize);
-            leaf.Property(l => l.Edge);
-            leaf.Property(l => l.Pattern);
-            leaf.Property(l => l.MainColors);
-            leaf.Property(l => l.Texture).HasConversion(
-                v => string.Join(",", v),
-                v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList(),
-                stringListComparer
+            {                                                                                                       
+                leaf.WithOwner() .HasForeignKey("Id");
+                leaf.HasKey("Id");
+                leaf.Property(l => l.Shape)
+                    .HasColumnName("leaf_shape");
+                leaf.Property(l => l.RelativeSize)
+                    .HasColumnName("leaf_relative_size");
+                leaf.Property(l => l.Edge)
+                    .HasColumnName("leaf_edge");
+                leaf.Property(l => l.Pattern)
+                    .HasColumnName("leaf_pattern");
+                leaf.Property(l => l.MainColors)
+                    .HasColumnName("leaf_main_colors");
+                leaf.Property(l => l.Texture)
+                    .HasColumnName("leaf_texture")
+                    .HasConversion(
+                    v => string.Join(",", v),
+                    v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList(),
+                    stringListComparer
             );
 
         leaf.Property(l => l.SecondaryColor)
+            .HasColumnName("leaf_secondary_color")
             .HasConversion(
             v => string.Join(",", v),
             v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList(),
@@ -239,10 +243,15 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         {
         flower.WithOwner() .HasForeignKey("Id");
         flower.HasKey("Id");
-        flower.Property(f => f.Present);
-        flower.Property(f => f.Shape);
-        flower.Property(f => f.Fragance);
-        flower.Property(f => f.Color).HasConversion(
+        flower.Property(f => f.Present)
+            .HasColumnName("flower_present");
+        flower.Property(f => f.Shape)
+            .HasColumnName("flower_shape");
+        flower.Property(f => f.Fragance)
+            .HasColumnName("flower_fragrance");
+        flower.Property(f => f.Color)
+            .HasColumnName("flower_color")
+            .HasConversion(
             v => string.Join(",", v),
             v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList(),
             stringListComparer
@@ -252,7 +261,8 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         vi.OwnsOne<Fruit>(v => v.Fruit, fruit => {
         fruit.WithOwner().HasForeignKey("Id");
         fruit.HasKey("Id");
-        fruit.Property(f => f.Present);
+        fruit.Property(f => f.Present)
+            .HasColumnName("fruit_present");
         }); 
         });
 
@@ -266,6 +276,17 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         .HasForeignKey(dp => dp.PlantId)
         .IsRequired();
 
+        //  |: Planning Context
+        builder.Entity<WateringLog>().ToTable("WateringLogs");
+        builder.Entity<WateringLog>().HasKey(dl => dl.Id);
+        builder.Entity<WateringLog>().Property(dl => dl.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<WateringLog>().Property(dl => dl.DeviceId).IsRequired();
+        builder.Entity<WateringLog>().Property(dl => dl.DurationSeconds).IsRequired();
+        builder.Entity<WateringLog>().Property(dl => dl.WaterVolumeMl).IsRequired();
+        builder.Entity<WateringLog>().Property(dl => dl.WasSuccessful).IsRequired();
+        builder.Entity<WateringLog>().Property(dl => dl.Reason).IsRequired().HasMaxLength(500);
+        builder.Entity<WateringLog>().Property(dl => dl.Timestamp).IsRequired();
+        
         builder.UseSnakeCaseWithPluralizedTableNamingConvention();
     }
 }

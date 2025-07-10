@@ -65,7 +65,7 @@ public class PlantDataSeeder
 
         await context.Plants.AddRangeAsync(plants);
         await context.SaveChangesAsync();
-        Console.WriteLine($"Seeding completed. Se añadieron {plants.Count} plantas a la base de datos.");
+        Console.WriteLine($"Seeding completed. {plants.Count} plants were added to the database.");
     }
 }
 

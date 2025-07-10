@@ -1,6 +1,9 @@
+
+
 using System.Net.Mime;
 using MaceTech.API.IAM.Infrastructure.Pipeline.Middleware.Attributes;
 using MaceTech.API.Watering.Domain.Model.Queries;
+using MaceTech.API.Watering.Domain.Services.CommandServices;
 using MaceTech.API.Watering.Domain.Services.QueryServices;
 using MaceTech.API.Watering.Interfaces.REST.Resources;
 using MaceTech.API.Watering.Interfaces.REST.Transform;
@@ -10,29 +13,62 @@ namespace MaceTech.API.Watering.Interfaces.REST;
 
 [Authorize]
 [ApiController]
-[Route("api/v1/watering/device/{deviceId}")]
+[Route("api/v1/watering-history/device/{deviceId}/")]
 [Produces(MediaTypeNames.Application.Json)]
-public class WateringController(IWateringLogQueryService wateringLogQueryService) : ControllerBase
+public class WateringController(
+    IWateringHistoryQueryService wateringHistoryQueryService,
+    IWateringLogCommandService wateringLogCommandService 
+) : ControllerBase
 {
-    [HttpGet("history")]
-    public async Task<IActionResult> GetWateringHistory(string deviceId, [FromQuery] DateTime? from, [FromQuery] DateTime? to)
+    [HttpPost("create-log")]
+    [AllowAnonymous]
+    public async Task<IActionResult> CreateWateringLog(long deviceId, [FromBody] CreateWateringLogResource resource)
     {
-        var query = new GetWateringHistoryByDeviceIdQuery(deviceId, from, to);
-        var logs = (await wateringLogQueryService.Handle(query)).ToList();
+        var command = CreateWateringLogCommandFromResourceAssembler.ToCommandFromResource(resource, deviceId);
+        var log = await wateringLogCommandService.Handle(command);
 
-        if (!logs.Any())
+        if (log is null)   
         {
-            return NotFound(new { error = "No watering records found for this device.", code = "NO_DATA" });
+             return BadRequest(new { message = "Failed to create watering log." });
         }
-
-        var logResources = logs.Select(WateringLogResourceFromEntityAssembler.ToResourceFromEntity);
         
-        var historyResource = new WateringHistoryResource(
-            SmartPotId: deviceId,
-            Historial: logResources,
-            TotalEjecuciones: logs.Count,
-            PromedioAguaMl: logs.Average(l => l.WaterVolumeMl)
-        );
+        var logResource = WateringLogResourceFromEntityAssembler.ToResourceFromEntity(log);
+
+        return Ok(logResource);
+    }
+
+    [Authorize]
+    [HttpGet("from-data-range")]
+    public async Task<IActionResult> GetWateringHistoryFromDataRange(long deviceId, [FromQuery] DateTime? from, [FromQuery] DateTime? to)
+    {
+        var query = new GetWateringHistoryByDeviceIdAndDateRangeQuery(deviceId, from, to);
+        
+        var logs = await wateringHistoryQueryService.Handle(query);
+        
+        if (!logs.Historial.Any())
+        {
+            return NotFound(new { message = "No watering logs found for the specified device." });
+        }
+        
+        var historyResource = WateringHistoryResourceFromEntityAssembler.ToResourceFromEntity(logs);
+        
+        return Ok(historyResource);
+    }
+    
+    [Authorize]
+    [HttpGet("all")]
+    public async Task<IActionResult> GetWateringHistory(long deviceId)
+    {
+        var query = new GetWateringHistoryByDeviceIdQuery(deviceId);
+        
+        var logs = await wateringHistoryQueryService.Handle(query);
+        
+        if (!logs.Historial.Any())
+        {
+            return NotFound(new { message = "No watering logs found for the specified device." });
+        }
+        
+        var historyResource = WateringHistoryResourceFromEntityAssembler.ToResourceFromEntity(logs);
         
         return Ok(historyResource);
     }

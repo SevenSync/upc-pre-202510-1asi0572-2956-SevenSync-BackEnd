@@ -1,8 +1,8 @@
 using System.Net.Mime;
+using MaceTech.API.IAM.Infrastructure.Pipeline.Middleware.Attributes;
 using MaceTech.API.Planning.Domain.Model.Queries;
 using MaceTech.API.Planning.Domain.Services.QueryServices;
 using MaceTech.API.Planning.Interfaces.REST.Transform;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MaceTech.API.Planning.Interfaces.REST.Controllers;
@@ -13,6 +13,7 @@ namespace MaceTech.API.Planning.Interfaces.REST.Controllers;
 [Produces(MediaTypeNames.Application.Json)]
 public class PlantsController(IPlantQueryService plantQueryService) : ControllerBase
 {
+    [Authorize]
     [HttpGet]
     public async Task<IActionResult> GetAllPlants()
     {
@@ -23,5 +24,23 @@ public class PlantsController(IPlantQueryService plantQueryService) : Controller
         var resources = plants.Select(PlantResourceFromEntityAssembler.ToResourceFromEntity);
         
         return Ok(resources);
+    }
+
+    [Authorize]
+    [HttpGet("{plantId:long}")]
+    public async Task<IActionResult> GetPlantById(long plantId)
+    {
+        var query = new GetPlantByIdQuery(plantId);
+        
+        var plant = await plantQueryService.Handle(query);
+        
+        if (plant == null)
+        {
+            return NotFound(new { message = $"Plant with ID {plantId} not found." });
+        }
+        
+        var resource = PlantResourceFromEntityAssembler.ToResourceFromEntity(plant);
+        
+        return Ok(resource);
     }
 }

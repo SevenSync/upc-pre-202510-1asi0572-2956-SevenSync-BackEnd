@@ -1,7 +1,7 @@
 namespace MaceTech.API.Planning.Interfaces.REST.Resources;
 
 public record PlantResource(
-    int Id, 
+    long Id, 
     string CommonName, 
     string ScientificName, 
     string ImageUrl, 

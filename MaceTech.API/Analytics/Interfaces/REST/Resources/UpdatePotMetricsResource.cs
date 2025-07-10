@@ -1,4 +1,4 @@
-namespace MaceTech.API.Profiles.Interfaces.REST.Resources;
+namespace MaceTech.API.Analytics.Interfaces.REST.Resources;
 
 public record UpdatePotMetricsResource(
     float BatteryLevel,

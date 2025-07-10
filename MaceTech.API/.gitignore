@@ -1,5 +1,5 @@
-MaceTech.API/obj
-MaceTech.API/bin
-./.idea
+./bin/
+./obj/
+.idea
 macetech-101-firebase-adminsdk-fbsvc-33a4c94a5a.json
 appsettings.json

@@ -4,5 +4,5 @@ namespace MaceTech.API.Analytics.Interfaces.ACL;
 
 public interface IAlertsContextFacade
 {
-    Task<IEnumerable<AlertDataDto>> FetchAlertsByDeviceIdAndDateRange(string deviceId, DateTime fromDate, DateTime toDate);
+    Task<IEnumerable<AlertDataDto>> FetchAlertsByDeviceIdAndDateRange(long deviceId, DateTime fromDate, DateTime toDate);
 }
