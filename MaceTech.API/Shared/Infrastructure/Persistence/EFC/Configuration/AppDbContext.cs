@@ -16,7 +16,14 @@ namespace MaceTech.API.Shared.Infrastructure.Persistence.EFC.Configuration;
 
 public class AppDbContext(DbContextOptions options) : DbContext(options)
 {
+    public DbSet<User> Users { get; set; }
+    public DbSet<Profile> Profiles { get; set; }
+    public DbSet<PotRecord> PotRecords { get; set; }
+    public DbSet<Alert> Alerts { get; set; }
     public DbSet<Plant> Plants { get; set; }
+    public DbSet<DevicePlant> DevicePlants { get; set; }
+    public DbSet<Subscription> Subscriptions { get; set; }
+    public DbSet<Pot> Pots { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder builder)
     {

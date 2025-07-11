@@ -1,5 +1,3 @@
-using System;
-using System.IO;
 using System.Reflection;
 using FirebaseAdmin;
 using FirebaseAdmin.Auth;
@@ -243,17 +241,16 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<AppDbContext>();
+    context.Database.EnsureCreated();
+    
     var seeder = new PlantDataSeeder();
     var jsonFilePath = Path.Combine(AppContext.BaseDirectory, "Plants.json");
     await seeder.SeedAsync(context, jsonFilePath);
-    context.Database.EnsureCreated();
+    
 }
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseCors("AllowAllPolicy");
 app.UseRequestAuthorization();
