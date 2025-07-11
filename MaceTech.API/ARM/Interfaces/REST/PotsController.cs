@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MaceTech.API.ARM.Interfaces.REST;
 
+[Authorize]
 [ApiController]
 [Route("api/v1/[controller]/")]
 [Produces(MediaTypeNames.Application.Json)]
@@ -54,7 +55,6 @@ public class PotsController(
     /// <response code="200">Returns the pot information.</response>
     /// <response code="401">Unauthorized. Check the token.</response>
     /// <response code="404">Couldn't find a pot.</response>
-    [Authorize]
     [HttpGet("{potId:long}")]
     public async Task<IActionResult> GetPot(long potId)
     {
@@ -77,7 +77,6 @@ public class PotsController(
     /// </remarks>
     /// <response code="200">Returns a <b>list</b> of all pots.</response>
     /// <response code="401">Unauthorized. Check the token.</response>
-    [Authorize]
     [HttpGet]
     public async Task<IActionResult> GetPots()
     {
@@ -99,6 +98,7 @@ public class PotsController(
     /// <response code="200">Returns a <b>confirmation</b> message.</response>
     /// <response code="400">Bad request: no pot found or couldn't delete.</response>
     /// <response code="401">Unauthorized. Check the token.</response>
+    
     [HttpDelete("{potId:long}")]
     public async Task<IActionResult> DeletePot(long potId)
     {
@@ -126,7 +126,6 @@ public class PotsController(
     /// <response code="200">Returns a <b>confirmation</b> message.</response>
     /// <response code="400">Bad request: check out your parameters.</response>
     /// <response code="401">Unauthorized. Check the token.</response>
-    [Authorize]
     [HttpPut("{potId:long}/assign")]
     public async Task<IActionResult> AssignPot(
         long potId,
@@ -156,7 +155,6 @@ public class PotsController(
     /// <response code="200">Returns a <b>confirmation</b> message.</response>
     /// <response code="400">Bad request: check out your parameters.</response>
     /// <response code="401">Unauthorized. Check the token.</response>
-    [Authorize]
     [HttpDelete("{potId:long}/assignee")]
     public async Task<IActionResult> UnassignPot(long potId)
     {
@@ -198,6 +196,7 @@ public class PotsController(
     /// <response code="200">Returns a <b>confirmation</b> message.</response>
     /// <response code="400">Bad request: check out your parameters.</response>
     /// <response code="401">Unauthorized. Check the token.</response>
+    
     [HttpPatch("{potId:long}/metrics")]
     [AllowAnonymous]
     public async Task<IActionResult> UpdateMetrics(
@@ -228,7 +227,7 @@ public class PotsController(
     /// <response code="200">Returns a <b>confirmation</b> message.</response>
     /// <response code="400">Bad request: check out your parameters.</response>
     /// <response code="401">Unauthorized. Check the token.</response>
-    [Authorize]
+    
     [HttpPut("{potId:long}/plant")]
     public async Task<IActionResult> LinkPlant(long potId, [FromBody] LinkPlantToPotResource resource)
     {
@@ -255,7 +254,7 @@ public class PotsController(
     /// <response code="200">Returns a <b>confirmation</b> message.</response>
     /// <response code="400">Bad request: check out your parameters.</response>
     /// <response code="401">Unauthorized. Check the token.</response>
-    [Authorize]
+    
     [HttpDelete("{potId:long}/plant")]
     public async Task<IActionResult> UnlinkPlant(long potId)
     {

@@ -14,7 +14,6 @@ namespace MaceTech.API.Planning.Interfaces.REST.Controllers;
 public class PlantsController(IPlantQueryService plantQueryService) : ControllerBase
 {
     [HttpGet]
-    [AllowAnonymous]
     public async Task<IActionResult> GetAllPlants()
     {
         var query = new GetAllPlantsQuery();
@@ -27,7 +26,6 @@ public class PlantsController(IPlantQueryService plantQueryService) : Controller
     }
 
     [HttpGet("{plantId:long}")]
-    [AllowAnonymous]
     public async Task<IActionResult> GetPlantById(long plantId)
     {
         var query = new GetPlantByIdQuery(plantId);

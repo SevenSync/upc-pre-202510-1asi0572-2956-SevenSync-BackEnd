@@ -59,6 +59,7 @@ public class AlertsController(IAlertCommandService alertCommandService) : Contro
     /// <response code="200">Returns a <b>confirmation</b> message.</response>
     /// <response code="400">The new password must be at least 6 characters long.</response>
     /// <response code="401">Unauthorized. Check the token.</response>
+    
     [HttpGet]
     public Task<IActionResult> GetAlertHistory(long deviceId, [FromQuery] DateTime? from, [FromQuery] DateTime? to)
     {
