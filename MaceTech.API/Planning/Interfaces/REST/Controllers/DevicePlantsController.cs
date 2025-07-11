@@ -29,8 +29,8 @@ public class DevicePlantsController(
         return CreatedAtAction(nameof(GetPlantSettingsForDevice), new { deviceId = result.DeviceId }, resultResource);
     }
     
-    [Authorize]
     [HttpGet("{deviceId:long}/get-plant-thresholds")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetPlantSettingsForDevice(long deviceId)
     {
         var query = new GetPlantSettingsByDeviceIdQuery(deviceId);

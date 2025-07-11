@@ -13,8 +13,8 @@ namespace MaceTech.API.Planning.Interfaces.REST.Controllers;
 [Produces(MediaTypeNames.Application.Json)]
 public class PlantsController(IPlantQueryService plantQueryService) : ControllerBase
 {
-    [Authorize]
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> GetAllPlants()
     {
         var query = new GetAllPlantsQuery();
@@ -26,8 +26,8 @@ public class PlantsController(IPlantQueryService plantQueryService) : Controller
         return Ok(resources);
     }
 
-    [Authorize]
     [HttpGet("{plantId:long}")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetPlantById(long plantId)
     {
         var query = new GetPlantByIdQuery(plantId);

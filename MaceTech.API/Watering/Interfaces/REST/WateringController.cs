@@ -37,8 +37,8 @@ public class WateringController(
         return Ok(logResource);
     }
 
-    [Authorize]
     [HttpGet("from-data-range")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetWateringHistoryFromDataRange(long deviceId, [FromQuery] DateTime? from, [FromQuery] DateTime? to)
     {
         var query = new GetWateringHistoryByDeviceIdAndDateRangeQuery(deviceId, from, to);
@@ -57,6 +57,7 @@ public class WateringController(
     
     [Authorize]
     [HttpGet("all")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetWateringHistory(long deviceId)
     {
         var query = new GetWateringHistoryByDeviceIdQuery(deviceId);
